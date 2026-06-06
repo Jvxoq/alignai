@@ -1,0 +1,156 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  margin-bottom: var(--space-sm);
+}
+
+.app-header p {
+  color: var(--color-text-muted);
+}
+
+.app-main {
+  display: grid;
+  gap: var(--space-xl);
+}
+
+.input-section,
+.response-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+}
+
+.feature-textarea {
+  width: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  resize: vertical;
+}
+
+.feature-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.input-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-md);
+}
+
+.char-counter {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.char-counter--warning {
+  color: var(--color-warning);
+}
+
+.audit-button {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-lg);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.audit-button:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.audit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+}
+
+.status-indicator--active .status-dot {
+  background: var(--color-primary);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.plain-text-display pre {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  color: var(--color-text-muted);
+}
+
+.report-document h2 {
+  margin-bottom: var(--space-md);
+}
+
+.report-document h3 {
+  margin: var(--space-md) 0 var(--space-sm);
+}
+
+.report-document li {
+  margin-left: var(--space-lg);
+  margin-bottom: var(--space-xs);
+}
+
+.error-display {
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  color: var(--color-error);
+  margin-bottom: var(--space-md);
+}
