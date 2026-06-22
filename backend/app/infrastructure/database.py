@@ -1,56 +1,189 @@
-"""
-Session table DDL (run manually until migrations are added):
+from functools import lru_cache
+from uuid import UUID, uuid4
 
-CREATE TABLE sessions (
-    id          UUID PRIMARY KEY,
-    message_count INTEGER NOT NULL DEFAULT 0,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-"""
-
-from uuid import UUID
-
-from sqlalchemy import Column, DateTime, Integer, func, select
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, func, select, update, delete
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
 from app.core.config import get_settings
 
-settings = get_settings()
-engine = create_async_engine(settings.database_url, echo=False)
-async_session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-
 
 class Base(DeclarativeBase):
     pass
 
 
+class UserRecord(Base):
+    __tablename__ = "users"
+
+    id = Column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    hashed_password = Column(String(255), nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class SessionRecord(Base):
     __tablename__ = "sessions"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True)
+    id = Column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    user_id = Column(PGUUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    title = Column(String(200), nullable=True)
     message_count = Column(Integer, nullable=False, default=0)
+    last_active_at = Column(DateTime(timezone=True), server_default=func.now())
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+@lru_cache
+def _get_engine():
+    settings = get_settings()
+    if not settings.POSTGRES_URL:
+        raise RuntimeError("POSTGRES_URL is not configured")
+    return create_async_engine(
+        settings.POSTGRES_URL,
+        echo=False,
+        pool_size=10,
+        max_overflow=20,
+        pool_pre_ping=True,
+        pool_recycle=3600,
+        connect_args={"timeout": 10},
+    )
+
+
+@lru_cache
+def _get_session_factory() -> async_sessionmaker[AsyncSession]:
+    engine = _get_engine()
+    return async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+
+async def get_user_by_email(email: str) -> UserRecord | None:
+    factory = _get_session_factory()
+    async with factory() as db:
+        result = await db.execute(select(UserRecord).where(UserRecord.email == email))
+        return result.scalar_one_or_none()
+
+
+async def get_user_by_id(user_id: UUID) -> UserRecord | None:
+    factory = _get_session_factory()
+    async with factory() as db:
+        result = await db.execute(select(UserRecord).where(UserRecord.id == user_id))
+        return result.scalar_one_or_none()
+
+
+async def create_user(email: str, hashed_password: str) -> UserRecord:
+    factory = _get_session_factory()
+    async with factory() as db:
+        user = UserRecord(email=email, hashed_password=hashed_password)
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+        return user
 
 
 async def get_session(session_id: UUID) -> SessionRecord | None:
-    async with async_session_factory() as db:
+    factory = _get_session_factory()
+    async with factory() as db:
         result = await db.execute(select(SessionRecord).where(SessionRecord.id == session_id))
         return result.scalar_one_or_none()
 
 
-async def upsert_session(session_id: UUID, message_count: int) -> SessionRecord:
-    async with async_session_factory() as db:
-        result = await db.execute(select(SessionRecord).where(SessionRecord.id == session_id))
+async def get_session_with_owner(session_id: UUID, user_id: UUID) -> SessionRecord | None:
+    factory = _get_session_factory()
+    async with factory() as db:
+        result = await db.execute(
+            select(SessionRecord).where(
+                SessionRecord.id == session_id,
+                SessionRecord.user_id == user_id,
+            )
+        )
+        return result.scalar_one_or_none()
+
+
+async def create_session(user_id: UUID) -> SessionRecord:
+    factory = _get_session_factory()
+    async with factory() as db:
+        session = SessionRecord(user_id=user_id)
+        db.add(session)
+        await db.commit()
+        await db.refresh(session)
+        return session
+
+
+async def get_sessions_for_user(user_id: UUID, limit: int = 50, offset: int = 0) -> list[SessionRecord]:
+    factory = _get_session_factory()
+    async with factory() as db:
+        result = await db.execute(
+            select(SessionRecord)
+            .where(SessionRecord.user_id == user_id)
+            .order_by(SessionRecord.last_active_at.desc())
+            .limit(limit)
+            .offset(offset)
+        )
+        return list(result.scalars().all())
+
+
+async def count_sessions_for_user(user_id: UUID) -> int:
+    factory = _get_session_factory()
+    async with factory() as db:
+        result = await db.execute(
+            select(func.count()).select_from(SessionRecord).where(SessionRecord.user_id == user_id)
+        )
+        return result.scalar() or 0
+
+
+async def increment_message_count(session_id: UUID, user_id: UUID) -> SessionRecord | None:
+    factory = _get_session_factory()
+    async with factory() as db:
+        result = await db.execute(
+            update(SessionRecord)
+            .where(
+                SessionRecord.id == session_id,
+                SessionRecord.user_id == user_id,
+            )
+            .values(
+                message_count=SessionRecord.message_count + 1,
+                last_active_at=func.now(),
+            )
+            .returning(SessionRecord)
+        )
+        await db.commit()
+        return result.scalar_one_or_none()
+
+
+async def update_session_title(session_id: UUID, user_id: UUID, title: str) -> SessionRecord | None:
+    factory = _get_session_factory()
+    async with factory() as db:
+        result = await db.execute(
+            select(SessionRecord).where(
+                SessionRecord.id == session_id,
+                SessionRecord.user_id == user_id,
+            )
+        )
         record = result.scalar_one_or_none()
         if record is None:
-            record = SessionRecord(id=session_id, message_count=message_count)
-            db.add(record)
-        else:
-            record.message_count = message_count
+            return None
+        record.title = title
         await db.commit()
         await db.refresh(record)
         return record
+
+
+async def delete_session(session_id: UUID, user_id: UUID) -> bool:
+    factory = _get_session_factory()
+    async with factory() as db:
+        result = await db.execute(
+            delete(SessionRecord).where(
+                SessionRecord.id == session_id,
+                SessionRecord.user_id == user_id,
+            )
+        )
+        await db.commit()
+        return result.rowcount > 0
+
+
+async def delete_user(user_id: UUID) -> bool:
+    factory = _get_session_factory()
+    async with factory() as db:
+        result = await db.execute(delete(UserRecord).where(UserRecord.id == user_id))
+        await db.commit()
+        return result.rowcount > 0
