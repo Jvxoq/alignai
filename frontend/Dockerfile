@@ -1,4 +1,3 @@
-# Multi-stage build
 FROM node:20-alpine AS builder
 
 WORKDIR /app
@@ -7,11 +6,12 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+# VITE_* values are inlined into the public JS bundle at build time — pass only
+# PUBLIC values as build args here, never secrets (API keys, tokens).
 ARG VITE_API_BASE_URL
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 RUN npm run build
 
-# Production stage — nginx serves static files
 FROM nginx:alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
