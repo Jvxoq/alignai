@@ -1,0 +1,16 @@
+# Secrets & local env
+.env
+.env.*
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Tests, VCS, docs, OS cruft
+tests/
+.git/
+.gitignore
+*.md
+.DS_Store

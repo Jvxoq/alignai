@@ -1,11 +1,13 @@
-node_modules
-dist
-.git
-.gitignore
+# Secrets & local env
 .env
-.env.local
-.env.*.local
-npm-debug.log*
+.env.*
+
+# Node & build artifacts
+node_modules/
+dist/
+
+# VCS, docs, OS cruft
+.git/
+.gitignore
+*.md
 .DS_Store
-*.log
-README.md
