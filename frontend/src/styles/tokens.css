@@ -1,16 +1,13 @@
 :root {
-  --color-bg: #0f1117;
-  --color-surface: #1a1d27;
-  --color-border: #2a2d3a;
-  --color-text: #e4e6ed;
-  --color-text-muted: #8b8fa3;
-  --color-primary: #6c8cff;
-  --color-primary-hover: #5a7af0;
-  --color-success: #4ade80;
-  --color-warning: #fbbf24;
-  --color-error: #f87171;
+  --color-bg: #000000;
+  --color-surface: #111111;
+  --color-border: #333333;
+  --color-text: #FFFFFF;
+  --color-text-muted: #999999;
+  --color-error: #ff6b6b;
+  --color-error-dark: #ff5252;
 
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-sans: "JetBrains Mono", "Fira Code", monospace;
   --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
   --space-xs: 0.25rem;

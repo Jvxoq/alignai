@@ -3,7 +3,47 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const TOKEN_KEY = "alignai_access_token";
 const REFRESH_TOKEN_KEY = "alignai_refresh_token";
 
+// Hard ceiling on every auth request. Without it, a slow or unreachable backend
+// leaves fetch pending forever — the form's submit button stays disabled with no
+// error and the user is stuck. AbortController turns that into a clear failure.
+const REQUEST_TIMEOUT_MS = 30000;
+
 let refreshPromise = null;
+
+async function fetchWithTimeout(url, options = {}) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } catch (err) {
+    if (err.name === "AbortError") {
+      throw new Error("Request timed out. Please try again.");
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+// FastAPI returns `detail` as a string for explicit HTTPExceptions (401/409/…)
+// but as an array of `{loc, msg, type}` objects for 422 request-validation
+// errors. Normalize both into a single human-readable message so the UI never
+// renders "[object Object]".
+function extractErrorMessage(detail, fallback) {
+  if (typeof detail === "string" && detail) {
+    return detail;
+  }
+  if (Array.isArray(detail)) {
+    const message = detail
+      .map((item) => item?.msg)
+      .filter(Boolean)
+      .join(", ");
+    if (message) {
+      return message;
+    }
+  }
+  return fallback;
+}
 
 function getAccessToken() {
   return localStorage.getItem(TOKEN_KEY);
@@ -36,7 +76,7 @@ async function request(endpoint, options = {}) {
     headers.Authorization = `Bearer ${accessToken}`;
   }
 
-  const response = await fetch(url, {
+  const response = await fetchWithTimeout(url, {
     ...options,
     headers,
   });
@@ -47,8 +87,7 @@ async function request(endpoint, options = {}) {
       return request(endpoint, { ...options, retry: false });
     }
     clearTokens();
-    window.location.href = "/login";
-    throw new Error("Session expired");
+    window.dispatchEvent(new Event("auth:unauthorized"));
   }
 
   return response;
@@ -62,7 +101,7 @@ async function refreshAccessToken() {
     if (!refreshToken) return false;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/auth/refresh`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refresh_token: refreshToken }),
@@ -84,15 +123,15 @@ async function refreshAccessToken() {
 }
 
 export async function signup(email, password) {
-  const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+  const response = await fetchWithTimeout(`${API_BASE_URL}/auth/signup`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: "Signup failed" }));
-    throw new Error(error.detail);
+    const error = await response.json().catch(() => ({}));
+    throw new Error(extractErrorMessage(error.detail, "Signup failed"));
   }
 
   const data = await response.json();
@@ -101,15 +140,15 @@ export async function signup(email, password) {
 }
 
 export async function login(email, password) {
-  const response = await fetch(`${API_BASE_URL}/auth/login`, {
+  const response = await fetchWithTimeout(`${API_BASE_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: "Login failed" }));
-    throw new Error(error.detail);
+    const error = await response.json().catch(() => ({}));
+    throw new Error(extractErrorMessage(error.detail, "Login failed"));
   }
 
   const data = await response.json();

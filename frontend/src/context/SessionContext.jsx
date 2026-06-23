@@ -18,10 +18,11 @@ export function SessionProvider({ children }) {
       const response = await request("/sessions");
       if (response && response.ok) {
         const data = await response.json();
-        setSessions(data);
+        const list = data.sessions || [];
+        setSessions(list);
         setSessionId((prev) => {
-          if (prev && data.some((s) => s.id === prev)) return prev;
-          const fallback = data.length > 0 ? data[0].id : null;
+          if (prev && list.some((s) => s.id === prev)) return prev;
+          const fallback = list.length > 0 ? list[0].id : null;
           if (fallback) localStorage.setItem(STORAGE_KEY, fallback);
           else localStorage.removeItem(STORAGE_KEY);
           return fallback;

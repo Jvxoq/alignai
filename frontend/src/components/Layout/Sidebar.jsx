@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useSession } from "../../hooks/useSession";
+import DeleteAccountModal from "../Auth/DeleteAccountModal";
 
 export default function Sidebar() {
   const [showDeleteModal, setShowDeleteModal] = useState(null);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
   const { logout } = useAuth();
   const { sessionId, sessions, isLoading, createSession, clearSession, deleteSession, setActiveSession } = useSession();
@@ -73,6 +75,9 @@ export default function Sidebar() {
         <button className="logout-button" onClick={handleLogout}>
           Sign Out
         </button>
+        <button className="delete-account-button" onClick={() => setShowDeleteAccount(true)}>
+          Delete Account
+        </button>
       </div>
 
       {showDeleteModal && (
@@ -92,6 +97,8 @@ export default function Sidebar() {
           </div>
         </div>
       )}
+
+      <DeleteAccountModal isOpen={showDeleteAccount} onClose={() => setShowDeleteAccount(false)} />
     </aside>
   );
 }

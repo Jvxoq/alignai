@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { login as apiLogin, signup as apiSignup, logout as apiLogout, deleteAccount as apiDeleteAccount, request } from "../services/authApi";
+import { login as apiLogin, signup as apiSignup, logout as apiLogout, deleteAccount as apiDeleteAccount, request, getAccessToken } from "../services/authApi";
 
 const AuthContext = createContext(null);
 
@@ -9,6 +9,12 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const checkAuth = useCallback(async () => {
+    if (!getAccessToken()) {
+      setUser(null);
+      setIsAuthenticated(false);
+      setIsLoading(false);
+      return;
+    }
     try {
       const response = await request("/auth/me");
       if (response && response.ok) {
@@ -30,6 +36,15 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      setUser(null);
+      setIsAuthenticated(false);
+    };
+    window.addEventListener("auth:unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
+  }, []);
 
   const login = async (email, password) => {
     await apiLogin(email, password);

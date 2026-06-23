@@ -1,4 +1,5 @@
 import js from "@eslint/js";
+import globals from "globals";
 import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
 
@@ -17,15 +18,8 @@ export default [
         sourceType: "module",
       },
       globals: {
-        console: "readonly",
-        document: "readonly",
-        window: "readonly",
-        localStorage: "readonly",
-        fetch: "readonly",
-        AbortController: "readonly",
-        TextDecoder: "readonly",
-        import: "readonly",
-        crypto: "readonly",
+        ...globals.browser,
+        ...globals.node,
         React: "readonly",
       },
     },
