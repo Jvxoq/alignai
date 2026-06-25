@@ -1,32 +1,57 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+_ROOT_ENV_FILE = Path(__file__).resolve().parent.parent.parent.parent / ".env"
+
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file="../.env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=(_ROOT_ENV_FILE, ".env"),
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
 
-    qdrant_url: str = "http://localhost:6333"
-    qdrant_collection: str = "alignai_docs"
-    qdrant_api_key: str = ""
-    gemini_api_key: str = ""
-    embedding_model: str = "gemini-embedding-001"
-    log_level: str = "INFO"
+    # Vector DB
+    QDRANT_URL: str
+    QDRANT_API_KEY: str
+    QDRANT_COLLECTION_NAME: str
 
-    retrieval_top_k: int = 3
-    similarity_threshold: float = 0.75
-    embedding_batch_size: int = 20
-    embedding_batch_delay: float = 2.0
-    embedding_max_retries: int = 3
+    # LLM
+    GROQ_API_KEY: str
+    LLM_MODEL: str = "llama-3.3-70b-versatile"
+    LLM_TEMPERATURE: float = 0.1
+    LLM_MAX_RETRIES: int = 3
 
-    groq_api_key: str = ""
-    groq_model: str = "qwen/qwen3-32b"
-    llm_max_retries: int = 3
-    recital_end_page: int = 43
+    # Embedding
+    GEMINI_API_KEY: str
+    EMBEDDING_MODEL: str = "gemini-embedding-001"
+    EMBEDDING_DIMENSIONS: int = 3072
 
-    dev_mode: bool = False
+    # Observability
+    LANGSMITH_API_KEY: str = ""
+    LANGSMITH_PROJECT_NAME: str = "alignai"
+    LANGCHAIN_TRACING_V2: bool = True
+
+    # Retrieval
+    SIMILARITY_THRESHOLD: float = 0.75
+    RETRIEVAL_TOP_K: int = 3
+    MAX_MESSAGE_LENGTH: int = 2000
+    USER_MESSAGE_THRESHOLD: int = 50
+
+    # App
+    ENVIRONMENT: str = "development"
+    DEV_MODE: bool = False
+
+    @property
+    def is_production(self) -> bool:
+        return self.ENVIRONMENT == "production"
 
 
-@lru_cache
+@lru_cache(maxsize=1)
 def get_settings() -> Settings:
     return Settings()
+
+
+settings = get_settings()

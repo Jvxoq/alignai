@@ -1,20 +1,38 @@
-import pytest
+from langchain_core.messages import HumanMessage
 
 from app.graph.graph import graph
 
 
-@pytest.mark.asyncio
 async def test_graph_compiles_and_invokes():
     result = await graph.ainvoke(
         {
-            "messages": [],
-            "intent": "",
+            "messages": [HumanMessage(content="Hello")],
+            "objective": None,
             "retrieved_docs": [],
-            "feature_text": "Build a user authentication system with OAuth2 support",
-            "report": "",
-            "relevance_score": 0.0,
+            "is_relevant": None,
+            "retrieval_attempts": 0,
         }
     )
-    assert "report" in result
-    assert len(result["report"]) > 0
-    assert result["intent"] == "alignment_audit"
+
+    assert "messages" in result
+    assert "objective" in result
+    assert "retrieved_docs" in result
+    assert "is_relevant" in result
+    assert "retrieval_attempts" in result
+    assert len(result["messages"]) > 0
+
+
+async def test_graph_with_compliance_query():
+    result = await graph.ainvoke(
+        {
+            "messages": [HumanMessage(content="What are the AI Act requirements?")],
+            "objective": None,
+            "retrieved_docs": [],
+            "is_relevant": None,
+            "retrieval_attempts": 0,
+        }
+    )
+
+    assert "messages" in result
+    assert "objective" in result
+    assert isinstance(result.get("retrieval_attempts"), int)

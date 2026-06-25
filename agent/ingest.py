@@ -11,22 +11,24 @@ Usage:
 import argparse
 import asyncio
 import json
+import logging
 import sys
 from pathlib import Path
 
 from app.core.logging import setup_logging
 from app.infrastructure.ingest import run_pipeline
 
+logger = logging.getLogger(__name__)
 
-def _upsert_to_qdrant(chunks: list[dict]) -> None:
+
+async def _upsert_to_qdrant(chunks: list[dict]) -> None:
     from app.infrastructure.embeddings import embed_all
-    from app.infrastructure.qdrant_client import ensure_collection, get_qdrant_client, upsert_chunks
+    from app.infrastructure.qdrant_client import ensure_collection, upsert_chunks
 
-    client = get_qdrant_client()
-    ensure_collection(client)
+    await ensure_collection()
 
     texts = [c["text"] for c in chunks]
-    vectors = asyncio.run(embed_all(texts))
+    vectors = await embed_all(texts)
 
     points = []
     for chunk, vector in zip(chunks, vectors):
@@ -53,10 +55,10 @@ def _upsert_to_qdrant(chunks: list[dict]) -> None:
     batch_size = 100
     for i in range(0, len(points), batch_size):
         batch = points[i:i + batch_size]
-        upsert_chunks(client, batch)
-        print(f"Upserted {min(i + batch_size, len(points))}/{len(points)} points")
+        await upsert_chunks(batch)
+        logger.info("Upserted %d/%d points", min(i + batch_size, len(points)), len(points))
 
-    print(f"Done — {len(points)} points upserted to Qdrant")
+    logger.info("Done — %d points upserted to Qdrant", len(points))
 
 
 def main() -> int:
@@ -84,7 +86,7 @@ def main() -> int:
     setup_logging()
 
     if not args.source.exists():
-        print(f"Error: {args.source} does not exist", file=sys.stderr)
+        logger.error("Source file does not exist: %s", args.source)
         return 1
 
     pages = None
@@ -114,27 +116,28 @@ def main() -> int:
 
     if args.output:
         args.output.write_text(json.dumps(chunks_data, indent=2, ensure_ascii=False), encoding="utf-8")
-        print(f"Saved {len(chunks_data)} chunks to {args.output}")
+        logger.info("Saved %d chunks to %s", len(chunks_data), args.output)
 
     if args.upsert:
-        _upsert_to_qdrant(chunks_data)
+        asyncio.run(_upsert_to_qdrant(chunks_data))
     elif not args.output:
-        print(f"\n{'='*60}")
-        print(f"Pipeline complete")
-        print(f"{'='*60}")
-        print(f"Markdown size:  {result.markdown_length:,} chars")
-        print(f"Articles found: {result.total_articles}")
-        print(f"Total chunks:   {result.total_chunks}")
-        print(f"Time elapsed:   {result.elapsed_seconds:.1f}s")
-        print(f"{'='*60}")
+        logger.info(
+            "Pipeline complete — articles=%d chunks=%d elapsed=%.1fs markdown_size=%d",
+            result.total_articles,
+            result.total_chunks,
+            result.elapsed_seconds,
+            result.markdown_length,
+        )
 
         if result.chunks:
-            print(f"\nSample chunk:")
             sample = result.chunks[0]
-            print(f"  article: {sample.article_number or 'recital'}")
-            print(f"  title:   {sample.article_title or 'n/a'}")
-            print(f"  chapter: {sample.chapter_number or 'n/a'}")
-            print(f"  text:    {sample.text[:200]}...")
+            logger.info(
+                "Sample chunk — article=%s title=%s chapter=%s text_preview=%s",
+                sample.article_number or "recital",
+                sample.article_title or "n/a",
+                sample.chapter_number or "n/a",
+                sample.text[:200],
+            )
 
     return 0
 
