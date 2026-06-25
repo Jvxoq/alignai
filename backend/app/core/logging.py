@@ -18,4 +18,4 @@ def setup_logging() -> None:
     root = logging.getLogger()
     root.handlers.clear()
     root.addHandler(handler)
-    root.setLevel(settings.log_level)
+    root.setLevel("DEBUG" if settings.DEBUG else "INFO")
