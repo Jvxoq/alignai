@@ -2,6 +2,7 @@ import logging
 
 from langchain_core.messages import AIMessage
 
+from app.core.config import get_settings
 from app.core.utils import last_user_message
 from app.graph.state import RESET_DOCS, AgentState
 from app.infrastructure.llm_client import call_llm_structured
@@ -71,7 +72,9 @@ async def intent_node(state: AgentState) -> dict:
 
     try:
         prompt = INTENT_PROMPT.format(user_query=user_query)
-        result = await call_llm_structured(prompt, IntentClassification)
+        result = await call_llm_structured(
+            prompt, IntentClassification, model=get_settings().INTENT_LLM_MODEL
+        )
 
         if result.objective:
             logger.info("Intent classified: compliance-related (LLM)")

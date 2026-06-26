@@ -2,6 +2,7 @@ import logging
 
 from langchain_core.messages import AIMessage
 
+from app.core.config import get_settings
 from app.core.utils import last_user_message
 from app.graph.state import RESET_DOCS, AgentState
 from app.infrastructure.llm_client import call_llm
@@ -66,7 +67,7 @@ async def generator_node(state: AgentState) -> dict:
             user_query=user_query,
             retrieved_docs=context,
         )
-        report = await call_llm(prompt)
+        report = await call_llm(prompt, model=get_settings().GENERATOR_LLM_MODEL)
         logger.info("Compliance report generated via LLM for objective: %s", objective)
     except (TimeoutError, ConnectionError) as e:
         logger.error("LLM generation failed due to %s, using fallback report", type(e).__name__)

@@ -1,3 +1,4 @@
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 from langchain_core.messages import AIMessage, HumanMessage
@@ -80,6 +81,20 @@ class TestGeneratorNode:
         assert len(result["messages"]) == 1
         assert isinstance(result["messages"][0], AIMessage)
         assert result["retrieved_docs"] is RESET_DOCS
+
+    @patch("app.nodes.generator_node.get_settings")
+    @patch("app.nodes.generator_node.call_llm", new_callable=AsyncMock)
+    async def test_uses_generator_llm_model_from_settings(self, mock_llm, mock_get_settings):
+        mock_get_settings.return_value = SimpleNamespace(GENERATOR_LLM_MODEL="llama-guard-4-12b")
+        mock_llm.return_value = "report"
+        state = {
+            "objective": "test",
+            "retrieved_docs": [],
+            "messages": [HumanMessage(content="x")],
+        }
+        await generator_node(state)
+        _, kwargs = mock_llm.call_args
+        assert kwargs["model"] == "llama-guard-4-12b"
 
     @patch("app.nodes.generator_node.call_llm", new_callable=AsyncMock)
     async def test_llm_failure_uses_fallback(self, mock_llm):

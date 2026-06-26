@@ -33,6 +33,8 @@ def test_defaults(monkeypatch):
     settings = Settings(_env_file=None)
 
     assert settings.LLM_MODEL == "llama-3.3-70b-versatile"
+    assert settings.INTENT_LLM_MODEL == "llama-3.3-70b-versatile"
+    assert settings.GENERATOR_LLM_MODEL == "llama-3.3-70b-versatile"
     assert settings.LLM_TEMPERATURE == 0.1
     assert settings.LLM_MAX_RETRIES == 3
     assert settings.EMBEDDING_MODEL == "gemini-embedding-001"
@@ -60,3 +62,15 @@ def test_is_production_property(monkeypatch):
 
 def test_get_settings_is_cached():
     assert get_settings() is get_settings()
+
+
+def test_intent_and_generator_models_are_independently_overridable(monkeypatch):
+    for key, value in REQUIRED_ENV.items():
+        monkeypatch.setenv(key, value)
+    monkeypatch.setenv("INTENT_LLM_MODEL", "llama-3.1-8b-instant")
+
+    settings = Settings(_env_file=None)
+
+    assert settings.INTENT_LLM_MODEL == "llama-3.1-8b-instant"
+    assert settings.GENERATOR_LLM_MODEL == "llama-3.3-70b-versatile"
+    assert settings.LLM_MODEL == "llama-3.3-70b-versatile"

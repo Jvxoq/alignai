@@ -1,3 +1,4 @@
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 from langchain_core.messages import AIMessage, HumanMessage
@@ -66,6 +67,21 @@ class TestIntentNode:
         assert result["objective"] == "test objective"
         assert result["retrieved_docs"] is RESET_DOCS
         assert result["retrieval_attempts"] == 0
+
+    @patch("app.nodes.intent_node.get_settings")
+    @patch("app.nodes.intent_node.call_llm_structured", new_callable=AsyncMock)
+    async def test_uses_intent_llm_model_from_settings(self, mock_llm, mock_get_settings):
+        mock_get_settings.return_value = SimpleNamespace(INTENT_LLM_MODEL="llama-3.1-8b-instant")
+        mock_llm.return_value = IntentClassification(objective="x", response=None)
+        state = {
+            "messages": [HumanMessage(content="What are the AI Act requirements?")],
+            "retrieved_docs": [],
+            "is_relevant": None,
+            "retrieval_attempts": 0,
+        }
+        await intent_node(state)
+        _, kwargs = mock_llm.call_args
+        assert kwargs["model"] == "llama-3.1-8b-instant"
 
     @patch("app.nodes.intent_node.call_llm_structured", new_callable=AsyncMock)
     async def test_general_chat(self, mock_llm):

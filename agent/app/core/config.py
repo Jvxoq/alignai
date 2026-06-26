@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     # LLM
     GROQ_API_KEY: str
     LLM_MODEL: str = "llama-3.3-70b-versatile"
+    INTENT_LLM_MODEL: str = "llama-3.3-70b-versatile"
+    GENERATOR_LLM_MODEL: str = "llama-3.3-70b-versatile"
     LLM_TEMPERATURE: float = 0.1
     LLM_MAX_RETRIES: int = 3
 
