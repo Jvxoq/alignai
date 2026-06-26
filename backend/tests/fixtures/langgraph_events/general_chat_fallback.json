@@ -1,0 +1,158 @@
+[
+  {
+    "event": null,
+    "name": null,
+    "metadata": {
+      "langgraph_node": null
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "align_agent",
+    "metadata": {
+      "langgraph_node": null
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "intent",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "RunnableSequence",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chat_model_start",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "intent"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "intent"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "intent"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "intent"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_end",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_parser_start",
+    "name": "PydanticToolsParser",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_parser_end",
+    "name": "PydanticToolsParser",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "RunnableSequence",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "should_retrieve",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "should_retrieve",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chain_stream",
+    "name": "intent",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "intent",
+    "metadata": {
+      "langgraph_node": "intent"
+    },
+    "data": {
+      "output": {
+        "messages": [
+          {
+            "content": "The current weather in Paris is not available in this context. For accurate and up-to-date weather information, I recommend checking a reliable weather forecasting service."
+          }
+        ],
+        "objective": null
+      }
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "align_agent",
+    "metadata": {
+      "langgraph_node": null
+    }
+  }
+]

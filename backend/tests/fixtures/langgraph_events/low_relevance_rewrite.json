@@ -1,0 +1,5185 @@
+[
+  {
+    "event": null,
+    "name": null,
+    "metadata": {
+      "langgraph_node": null
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "align_agent",
+    "metadata": {
+      "langgraph_node": null
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "intent",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "RunnableSequence",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chat_model_start",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "intent"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "intent"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "intent"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "intent"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_end",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_parser_start",
+    "name": "PydanticToolsParser",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_parser_end",
+    "name": "PydanticToolsParser",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "RunnableSequence",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "should_retrieve",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "should_retrieve",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chain_stream",
+    "name": "intent",
+    "metadata": {
+      "langgraph_node": "intent"
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "intent",
+    "metadata": {
+      "langgraph_node": "intent"
+    },
+    "data": {
+      "output": {
+        "objective": "Article 999 EU AI Act teleportation device compliance audits"
+      }
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "retrieve",
+    "metadata": {
+      "langgraph_node": "retrieve"
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "check_relevance",
+    "metadata": {
+      "langgraph_node": "retrieve"
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "check_relevance",
+    "metadata": {
+      "langgraph_node": "retrieve"
+    }
+  },
+  {
+    "event": "on_chain_stream",
+    "name": "retrieve",
+    "metadata": {
+      "langgraph_node": "retrieve"
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "retrieve",
+    "metadata": {
+      "langgraph_node": "retrieve"
+    },
+    "data": {
+      "output": {}
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "rewrite_objective",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    }
+  },
+  {
+    "event": "on_chat_model_start",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": "objective"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": ":"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " Article"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": "5"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " and"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " Annex"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " III"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " of"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " EU"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " Act"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " on"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " high"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": "-risk"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " system"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": " requirements"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": "."
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_end",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    }
+  },
+  {
+    "event": "on_chain_stream",
+    "name": "rewrite_objective",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "rewrite_objective",
+    "metadata": {
+      "langgraph_node": "rewrite_objective"
+    },
+    "data": {
+      "output": {
+        "objective": "objective: Article 5 and Annex III of EU AI Act on high-risk AI system requirements."
+      }
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "retrieve",
+    "metadata": {
+      "langgraph_node": "retrieve"
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "check_relevance",
+    "metadata": {
+      "langgraph_node": "retrieve"
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "check_relevance",
+    "metadata": {
+      "langgraph_node": "retrieve"
+    }
+  },
+  {
+    "event": "on_chain_stream",
+    "name": "retrieve",
+    "metadata": {
+      "langgraph_node": "retrieve"
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "retrieve",
+    "metadata": {
+      "langgraph_node": "retrieve"
+    },
+    "data": {
+      "output": {}
+    }
+  },
+  {
+    "event": "on_chain_start",
+    "name": "generate",
+    "metadata": {
+      "langgraph_node": "generate"
+    }
+  },
+  {
+    "event": "on_chat_model_start",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "#"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Compliance"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Audit"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Report"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "\n\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "##"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "1"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "."
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Compliance"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Objective"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "The"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " compliance"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " objective"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " is"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " to"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " evaluate"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " the"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " requirements"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " for"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " high"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "-risk"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " systems"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " as"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " per"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Article"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "5"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " and"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Annex"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " III"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " of"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " the"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " EU"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Act"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ".\n\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "##"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "2"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "."
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Relevant"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " EU"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Act"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Articles"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "-"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Article"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "6"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " \u2014"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Classification"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " rules"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " for"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " high"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "-risk"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " systems"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "-"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Article"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "15"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " \u2014"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Accuracy"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " robust"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "ness"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " and"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " cybersecurity"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "-"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Annex"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " III"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " \u2014"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " High"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "-risk"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " systems"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "\n\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "##"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "3"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "."
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Assessment"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "**"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "Ver"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "dict"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ":**"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Non"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "-"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "Com"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "pliant"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "\n\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "##"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "4"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "."
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Find"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "ings"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "*"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " The"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " user"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " query"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " references"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Article"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "999"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " which"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " does"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " not"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " exist"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " in"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " the"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " provided"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " context"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " indicating"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " a"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " potential"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " misunderstanding"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " or"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " mis"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "representation"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " of"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " the"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " EU"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Act"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "'s"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " structure"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " ("
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "Article"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "6"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ").\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "*"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " High"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "-risk"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " systems"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " must"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " be"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " designed"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " to"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " achieve"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " appropriate"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " levels"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " of"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " accuracy"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " robust"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "ness"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " and"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " cybersecurity"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " ("
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "Article"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "15"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ").\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "*"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " The"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " classification"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " of"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " high"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "-risk"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " systems"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " depends"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " on"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " their"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " intended"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " use"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " and"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " whether"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " they"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " pose"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " a"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " significant"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " risk"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " to"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " health"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " safety"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " or"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " fundamental"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " rights"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " ("
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "Article"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "6"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "("
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "1"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ")"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " and"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " ("
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "2"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ")).\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "*"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " The"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " query"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " about"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " teleport"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "ation"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " device"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " compliance"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " audits"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " is"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " not"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " addressed"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " in"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " the"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " provided"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " context"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " suggesting"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " it"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " may"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " not"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " be"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " relevant"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " to"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " the"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " EU"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Act"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "'s"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " current"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " provisions"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " ("
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "Ins"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "ufficient"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " information"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " to"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " determine"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ").\n\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "##"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "5"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "."
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Recommendations"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "*"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Providers"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " of"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " systems"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " should"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " consult"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " the"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " relevant"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " articles"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " of"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " the"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " EU"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Act"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " specifically"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Article"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "6"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " for"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " classification"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " rules"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " and"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Article"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "15"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " for"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " accuracy"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " robust"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "ness"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " and"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " cybersecurity"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " requirements"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ".\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "*"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " For"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " systems"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " listed"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " in"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Annex"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " III"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " providers"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " must"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " assess"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " whether"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " their"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " system"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " poses"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " a"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " significant"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " risk"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " to"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " health"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " safety"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " or"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " fundamental"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " rights"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " and"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " document"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " this"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " assessment"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " if"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " considering"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " the"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " system"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " not"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " to"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " be"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " high"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "-risk"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " ("
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "Article"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "6"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "("
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "3"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ")"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " and"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " ("
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "4"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ")).\n"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "*"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " The"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " Commission"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "'s"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " guidelines"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " to"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " be"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " provided"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " by"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "2"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " February"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "202"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "6"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ","
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " should"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " be"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " consulted"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " for"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " practical"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " implementation"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " and"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " examples"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " of"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " high"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "-risk"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " and"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " not"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " high"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "-risk"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " AI"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " system"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " use"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " cases"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " ("
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "Article"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": " "
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "6"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "("
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "5"
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": "))."
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_stream",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "chunk": {
+        "content": ""
+      }
+    }
+  },
+  {
+    "event": "on_chat_model_end",
+    "name": "ChatGroq",
+    "metadata": {
+      "langgraph_node": "generate"
+    }
+  },
+  {
+    "event": "on_chain_stream",
+    "name": "generate",
+    "metadata": {
+      "langgraph_node": "generate"
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "generate",
+    "metadata": {
+      "langgraph_node": "generate"
+    },
+    "data": {
+      "output": {
+        "messages": [
+          {
+            "content": "# Compliance Audit Report\n\n## 1. Compliance Objective\nThe compliance objective is to evaluate the requirements for high-risk AI systems as per Article 5 and Annex III of the EU AI Act.\n\n## 2. Relevant EU AI Act Articles\n- Article 6 \u2014 Classification rules for high-risk AI systems\n- Article 15 \u2014 Accuracy, robustness and cybersecurity\n- Annex III \u2014 High-risk AI systems\n\n## 3. Assessment\n**Verdict:** Non-Compliant\n\n## 4. Findings\n* The user query references Article 999, which does not exist in the provided context, indicating a potential misunderstanding or misrepresentation of the EU AI Act's structure (Article 6).\n* High-risk AI systems must be designed to achieve appropriate levels of accuracy, robustness, and cybersecurity (Article 15).\n* The classification of high-risk AI systems depends on their intended use and whether they pose a significant risk to health, safety, or fundamental rights (Article 6(1) and (2)).\n* The query about teleportation device compliance audits is not addressed in the provided context, suggesting it may not be relevant to the EU AI Act's current provisions (Insufficient information to determine).\n\n## 5. Recommendations\n* Providers of AI systems should consult the relevant articles of the EU AI Act, specifically Article 6 for classification rules and Article 15 for accuracy, robustness, and cybersecurity requirements.\n* For AI systems listed in Annex III, providers must assess whether their system poses a significant risk to health, safety, or fundamental rights and document this assessment if considering the system not to be high-risk (Article 6(3) and (4)).\n* The Commission's guidelines, to be provided by 2 February 2026, should be consulted for practical implementation and examples of high-risk and not high-risk AI system use cases (Article 6(5))."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "event": "on_chain_end",
+    "name": "align_agent",
+    "metadata": {
+      "langgraph_node": null
+    }
+  }
+]

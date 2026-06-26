@@ -96,17 +96,26 @@ class TestExtractMessageText:
 
 class TestStreamAlign:
     @pytest.mark.asyncio
-    async def test_emits_start_event_for_intent_node(self):
+    async def test_emits_chat_start_when_intent_answers_directly(self):
+        """The graph always starts at "intent", so its response_type can't be
+        known from on_chain_start alone — it depends on whether intent sets
+        an objective (continues to retrieve/generate) or answers directly
+        (objective=None, terminal). The "chat" start is only emitted once
+        intent's own on_chain_end confirms there's no objective."""
         mock_request = MagicMock(session_id="test-session", user_message="test")
 
-        mock_chunk = MagicMock()
-        mock_chunk.data = [_event("on_chain_start", "intent")]
+        mock_start = MagicMock()
+        mock_start.data = [_event("on_chain_start", "intent")]
+
+        mock_end = MagicMock()
+        mock_end.data = [_event(
+            "on_chain_end", "intent",
+            data={"output": {"objective": None, "messages": [{"content": "Hi there."}]}},
+        )]
 
         async def mock_stream():
-            yield mock_chunk
-            mock_chunk2 = MagicMock()
-            mock_chunk2.data = None
-            yield mock_chunk2
+            yield mock_start
+            yield mock_end
 
         with patch("app.services.align_service._stream_from_langgraph") as mock_langgraph:
             mock_langgraph.return_value = mock_stream()
@@ -116,8 +125,40 @@ class TestStreamAlign:
                 events.append(sse_chunk)
 
             start_events = [e for e in events if "event: start" in e]
+            token_events = [e for e in events if "event: token" in e]
             assert len(start_events) == 1
             assert '"response_type":"chat"' in start_events[0]
+            assert len(token_events) == 1
+            assert '"data":"Hi there."' in token_events[0]
+
+    @pytest.mark.asyncio
+    async def test_intent_with_objective_emits_no_start(self):
+        """When intent sets an objective, the run continues to retrieve —
+        no start event should fire yet (it's deferred to generate/fallback)."""
+        mock_request = MagicMock(session_id="test-session", user_message="test")
+
+        mock_start = MagicMock()
+        mock_start.data = [_event("on_chain_start", "intent")]
+
+        mock_end = MagicMock()
+        mock_end.data = [_event(
+            "on_chain_end", "intent",
+            data={"output": {"objective": "EU AI Act Article 9", "messages": []}},
+        )]
+
+        async def mock_stream():
+            yield mock_start
+            yield mock_end
+
+        with patch("app.services.align_service._stream_from_langgraph") as mock_langgraph:
+            mock_langgraph.return_value = mock_stream()
+
+            events = []
+            async for sse_chunk in stream_align(mock_request):
+                events.append(sse_chunk)
+
+            start_events = [e for e in events if "event: start" in e]
+            assert len(start_events) == 0
 
     @pytest.mark.asyncio
     async def test_emits_status_event_for_retrieve_node(self):
@@ -277,12 +318,13 @@ class TestStreamAlign:
             assert "unavailable" in error_events[0]
 
     @pytest.mark.asyncio
-    async def test_emits_start_event_once_for_multiple_start_nodes(self):
-        """emitted_start guard should prevent a second start event in the same run."""
+    async def test_emits_start_event_once_for_duplicate_node_starts(self):
+        """emitted_start guard should prevent a second start event in the same run,
+        e.g. if the SDK ever redelivers a node's on_chain_start."""
         mock_request = MagicMock(session_id="test-session", user_message="test")
 
         mock_chunk1 = MagicMock()
-        mock_chunk1.data = [_event("on_chain_start", "intent")]
+        mock_chunk1.data = [_event("on_chain_start", "generate")]
         mock_chunk2 = MagicMock()
         mock_chunk2.data = [_event("on_chain_start", "generate")]
 
@@ -299,7 +341,7 @@ class TestStreamAlign:
 
             start_events = [e for e in events if "event: start" in e]
             assert len(start_events) == 1
-            assert '"response_type":"chat"' in start_events[0]
+            assert '"response_type":"report"' in start_events[0]
 
     @pytest.mark.asyncio
     async def test_emits_start_event_for_generate_node_as_report(self):
@@ -495,7 +537,7 @@ class TestStreamAlign:
         mock_request = MagicMock(session_id="test-session", user_message="test")
 
         mock_chunk = MagicMock()
-        mock_chunk.data = _event("on_chain_start", "intent")
+        mock_chunk.data = _event("on_chain_start", "generate")
 
         async def mock_stream():
             yield mock_chunk
@@ -571,8 +613,8 @@ class TestStreamAlign:
 
         mock_chunk = MagicMock()
         mock_chunk.data = [
-            _event("on_chain_start", "intent"),
-            _event("on_chain_start", "RunnableSequence", node="intent"),
+            _event("on_chain_start", "generate"),
+            _event("on_chain_start", "RunnableSequence", node="generate"),
         ]
 
         async def mock_stream():
@@ -587,3 +629,4 @@ class TestStreamAlign:
 
             start_events = [e for e in events if "event: start" in e]
             assert len(start_events) == 1
+            assert '"response_type":"report"' in start_events[0]

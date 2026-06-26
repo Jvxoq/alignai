@@ -1,5 +1,6 @@
 import logging
 from collections.abc import AsyncGenerator
+from typing import Literal
 
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
@@ -9,8 +10,7 @@ from app.models.responses import DoneEvent, ErrorEvent, SSEEvent, StartEvent, St
 
 logger = logging.getLogger(__name__)
 
-_NODE_RESPONSE_TYPE: dict[str, str] = {
-    "intent": "chat",
+_NODE_RESPONSE_TYPE: dict[str, Literal["report", "chat", "failure"]] = {
     "generate": "report",
     "fallback": "failure",
 }
@@ -115,6 +115,18 @@ async def stream_align(request: AlignRequest) -> AsyncGenerator[str, None]:
                             yield _format_sse(TokenEvent(data=text))
 
                 elif kind == "on_chain_end" and is_node_boundary:
+                    if name == "intent" and not emitted_start:
+                        # The graph always starts at "intent", so its
+                        # response_type can't be known until it finishes:
+                        # if it set an objective, the run continues to
+                        # retrieve/generate (or eventually fallback) rather
+                        # than answering directly. Only emit "chat" here,
+                        # once we know intent's own message is the final one.
+                        output = event.get("data", {}).get("output") or {}
+                        if isinstance(output, dict) and not output.get("objective"):
+                            yield _format_sse(StartEvent(response_type="chat"))
+                            emitted_start = True
+
                     if name in _FINAL_TOKEN_NODES and not streamed_tokens:
                         text = _extract_message_text(event.get("data", {}))
                         if text:
