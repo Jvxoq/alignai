@@ -1,4 +1,6 @@
-export default function PlainTextDisplay({ text }) {
+import React from "react";
+
+function PlainTextDisplayInner({ text }) {
   if (!text) return null;
 
   return (
@@ -7,3 +9,5 @@ export default function PlainTextDisplay({ text }) {
     </div>
   );
 }
+
+export default React.memo(PlainTextDisplayInner);

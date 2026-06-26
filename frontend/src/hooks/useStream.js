@@ -1,16 +1,19 @@
 import { useCallback, useRef, useState } from "react";
+import { extractErrorMessage } from "../services/alignApi";
 
 export function useStream() {
   const [status, setStatus] = useState("idle");
+  const [responseType, setResponseType] = useState(null);
+  const [statusMessage, setStatusMessage] = useState("");
   const [tokens, setTokens] = useState("");
-  const [report, setReport] = useState("");
   const [error, setError] = useState(null);
   const abortRef = useRef(null);
 
   const reset = useCallback(() => {
     setStatus("idle");
+    setResponseType(null);
+    setStatusMessage("");
     setTokens("");
-    setReport("");
     setError(null);
   }, []);
 
@@ -37,14 +40,16 @@ export function useStream() {
           onEvent?.(event);
 
           switch (event.type) {
+            case "start":
+              setResponseType(event.response_type);
+              break;
             case "status":
-              setStatus(event.message);
+              setStatusMessage(event.message);
               break;
             case "token":
-              setTokens((prev) => prev + event.content);
+              setTokens((prev) => prev + event.data);
               break;
             case "done":
-              setReport(event.report);
               setStatus("complete");
               break;
             case "error":
@@ -70,7 +75,10 @@ export function useStream() {
       try {
         const response = await fetchFn(controller.signal);
         if (!response.ok) {
-          throw new Error(`Request failed: ${response.status}`);
+          const body = await response.json().catch(() => ({}));
+          throw new Error(
+            extractErrorMessage(body.detail, `Request failed: ${response.status}`)
+          );
         }
         setStatus("streaming");
         await consume(response);
@@ -89,5 +97,11 @@ export function useStream() {
     setStatus("idle");
   }, []);
 
-  return { status, tokens, report, error, startStream, abort, reset };
+  const setErrorState = useCallback((message) => {
+    setError(message);
+    setStatus("error");
+    setStatusMessage(message);
+  }, []);
+
+  return { status, responseType, statusMessage, tokens, error, startStream, abort, reset, setError: setErrorState, setStatus, setStatusMessage };
 }

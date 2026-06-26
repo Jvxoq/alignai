@@ -216,4 +216,48 @@ describe("request timeout", () => {
     expect(clearSpy).toHaveBeenCalled();
     clearSpy.mockRestore();
   });
+
+  it("still aborts the underlying fetch when the caller passes its own signal", async () => {
+    // Regression: fetchWithTimeout used to build `{...options, signal: controller.signal}`,
+    // which silently discarded any signal the caller passed in — a caller-initiated abort
+    // (e.g. component unmount, user cancel) had no effect on the real network request.
+    fetch.mockImplementation((_url, opts) => new Promise((_resolve, reject) => {
+      opts.signal.addEventListener("abort", () => {
+        const err = new Error("aborted");
+        err.name = "AbortError";
+        reject(err);
+      });
+    }));
+
+    const controller = new AbortController();
+    const promise = request("/auth/me", { signal: controller.signal });
+    controller.abort();
+
+    await expect(promise).rejects.toMatchObject({ name: "AbortError" });
+  });
+
+  it("honors a custom timeoutMs instead of the 30s auth default", async () => {
+    vi.useFakeTimers();
+    fetch.mockImplementation((_url, opts) => new Promise((_resolve, reject) => {
+      opts.signal.addEventListener("abort", () => {
+        const err = new Error("aborted");
+        err.name = "AbortError";
+        reject(err);
+      });
+    }));
+
+    const onReject = vi.fn();
+    // Attach the handler in the same tick the promise is created, so it's
+    // never briefly "unhandled" while fake timers advance.
+    request("/align", { timeoutMs: 120000 }).catch(onReject);
+
+    await vi.advanceTimersByTimeAsync(30000);
+    expect(onReject).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(90000);
+    expect(onReject).toHaveBeenCalledTimes(1);
+    expect(onReject.mock.calls[0][0].message).toBe("Request timed out. Please try again.");
+
+    vi.useRealTimers();
+  });
 });
