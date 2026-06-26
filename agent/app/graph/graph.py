@@ -19,11 +19,19 @@ def build_graph() -> StateGraph:
     graph.add_node("fallback", fallback_node)
 
     graph.add_edge(START, "intent")
-    graph.add_conditional_edges("intent", should_retrieve, {"retrieve": "retrieve", "generate": "generate"})
+    graph.add_conditional_edges(
+        "intent",
+        should_retrieve,
+        {"retrieve": "retrieve", "__end__": END},
+    )
     graph.add_conditional_edges(
         "retrieve",
         check_relevance,
-        {"generate": "generate", "rewrite_objective": "rewrite_objective", "fallback": "fallback"},
+        {
+            "generate": "generate",
+            "rewrite_objective": "rewrite_objective",
+            "fallback": "fallback",
+        },
     )
     graph.add_edge("rewrite_objective", "retrieve")
     graph.add_edge("generate", END)

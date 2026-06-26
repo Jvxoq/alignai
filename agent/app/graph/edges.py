@@ -2,22 +2,19 @@ from typing import Literal
 
 from app.graph.state import AgentState
 
-RELEVANCE_THRESHOLD = 0.5
 
-
-def should_retrieve(state: AgentState) -> Literal["retrieve", "generate"]:
-    intent = state.get("intent", "")
-    if intent in ("alignment_audit", "feature_review"):
+def should_retrieve(state: AgentState) -> Literal["retrieve", "__end__"]:
+    if state.get("objective"):
         return "retrieve"
-    return "generate"
+    return "__end__"
 
 
 def check_relevance(state: AgentState) -> Literal["generate", "rewrite_objective", "fallback"]:
-    score = state.get("relevance_score", 0.0)
-    docs = state.get("retrieved_docs", [])
+    is_relevant = state.get("is_relevant")
+    attempts = state.get("retrieval_attempts", 0)
 
-    if not docs:
+    if is_relevant:
+        return "generate"
+    if attempts >= 3:
         return "fallback"
-    if score < RELEVANCE_THRESHOLD:
-        return "rewrite_objective"
-    return "generate"
+    return "rewrite_objective"

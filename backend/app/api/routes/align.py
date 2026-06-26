@@ -1,26 +1,90 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import StreamingResponse
 
 from app.api.dependencies import validate_session
+from app.core.limiter import limiter
 from app.models.requests import AlignRequest
 from app.services.align_service import stream_align
 
 router = APIRouter()
 
 
-@router.get("/health")
+@router.get(
+    "/health",
+    summary="Health check endpoint",
+    response_description="Returns service health status",
+)
 async def health():
+    """
+    Health check endpoint for monitoring service availability.
+
+    Returns a simple status object indicating the service is running.
+    """
     return {"status": "ok"}
 
 
-@router.post("/align")
+@router.post(
+    "/align",
+    summary="Generate EU AI Act compliance report",
+    response_description="Server-Sent Events stream of report generation progress",
+    status_code=200,
+)
+@limiter.limit("30/minute")
 async def align(
-    request: AlignRequest,
+    request: Request,
+    body: AlignRequest,
     session_id: str = Depends(validate_session),
 ):
-    request.session_id = session_id
+    """
+    Stream an EU AI Act compliance audit report for a given feature description.
+
+    This endpoint uses Server-Sent Events (SSE) to stream the agent's progress in real-time:
+    - **start**: Indicates response type (chat/report/failure)
+    - **status**: Progress updates during retrieval/rewriting
+    - **token**: Incremental content tokens for the generated response
+    - **done**: Stream completion signal
+    - **error**: Error event with code and message
+
+    **Authentication:** Requires Bearer token in Authorization header
+
+    **Rate Limits:**
+    - 30 requests per minute per IP address
+    - 50 messages per session (configurable via USER_MESSAGE_THRESHOLD)
+
+    **Request Body:**
+    - **session_id**: Valid UUID of user's session
+    - **user_message**: Feature description to audit (max 2000 characters)
+
+    **Response Format:**
+    - SSE stream with media type `text/event-stream`
+    - Events follow format: `event: <type>\\ndata: <json>\\n\\n`
+
+    **Errors:**
+    - 401: Invalid or missing authentication
+    - 403: Session doesn't belong to authenticated user
+    - 404: Session not found
+    - 429: Rate limit exceeded or message threshold exceeded for session
+    - 503: LangGraph agent unavailable
+    - 504: LangGraph agent timeout
+
+    **Example SSE Stream:**
+    ```
+    event: start
+    data: {"type":"start","response_type":"report"}
+
+    event: status
+    data: {"type":"status","message":"Retrieving documents..."}
+
+    event: token
+    data: {"type":"token","data":"# Compliance Report\\n"}
+
+    event: done
+    data: {"type":"done"}
+    ```
+    """
+    body.session_id = session_id
     return StreamingResponse(
-        stream_align(request),
+        stream_align(body),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",

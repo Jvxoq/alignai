@@ -2,6 +2,5 @@
   "dependencies": ["."],
   "graphs": {
     "align_agent": "./app/graph/graph.py:graph"
-  },
-  "env": ".env"
+  }
 }

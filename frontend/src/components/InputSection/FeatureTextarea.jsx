@@ -1,12 +1,14 @@
-export default function FeatureTextarea({ value, onChange, maxLength = 5000, disabled }) {
+export default function FeatureTextarea({ value, onChange, maxLength = 5000, disabled, compact, onKeyDown }) {
+  const rows = compact ? 2 : 8;
   return (
     <textarea
-      className="feature-textarea"
+      className={`feature-textarea ${compact ? "feature-textarea--compact" : ""}`}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      placeholder="Describe your feature for alignment auditing..."
+      onKeyDown={onKeyDown}
+      placeholder={compact ? "Type your message..." : "Describe your feature for alignment auditing..."}
       maxLength={maxLength}
-      rows={8}
+      rows={rows}
       disabled={disabled}
     />
   );

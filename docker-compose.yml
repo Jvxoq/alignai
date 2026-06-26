@@ -1,0 +1,155 @@
+# LOCAL DEVELOPMENT & TESTING — Render does not use this file
+#
+# Quick Start:
+#   1. Copy the root .env file (Compose substitutes ${VARS} below from this —
+#      the per-service backend/.env, agent/.env, frontend/.env files are only
+#      used when running a service directly on the host, NOT inside Docker):
+#      cp .env.example .env
+#      # then fill in GROQ_API_KEY / GEMINI_API_KEY (required for the agent)
+#      # and QDRANT_URL / QDRANT_API_KEY (Qdrant Cloud — used by the agent)
+#   2. Build and run: docker-compose up --build
+#   3. Access:
+#      - Frontend: http://localhost
+#      - Backend API: http://localhost:8000/docs
+#      - Agent Health: http://localhost:8123/ok
+
+services:
+  # PostgreSQL database for backend sessions and agent checkpoints
+  postgres:
+    image: postgres:16-alpine
+    container_name: alignai-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: alignai
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - alignai
+
+  # NOTE: Qdrant runs on Qdrant Cloud (not in Compose). The agent connects to it
+  # via QDRANT_URL / QDRANT_API_KEY pulled from the root .env file.
+
+  # FastAPI backend service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: alignai-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # Database
+      POSTGRES_URL: postgresql+asyncpg://postgres:password@postgres:5432/alignai
+      # LangGraph connection
+      LANGGRAPH_SERVER_URL: http://agent:8123
+      LANGGRAPH_CONNECTION_TIMEOUT: 10
+      LANGGRAPH_READ_TIMEOUT: 60
+      # Auth (use strong keys in production!)
+      SECRET_KEY: dev-secret-key-change-in-production-minimum-32-characters-long
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      REFRESH_TOKEN_EXPIRE_DAYS: 7
+      # App settings
+      ENVIRONMENT: development
+      DEBUG: "true"
+      CORS_ORIGINS: '["http://localhost", "http://localhost:5173"]'
+      MAX_MESSAGE_LENGTH: 2000
+      USER_MESSAGE_THRESHOLD: 50
+      # LLM API Keys (optional - set in .env file)
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      # Observability (optional)
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
+      LANGSMITH_PROJECT_NAME: alignai-local
+      LANGCHAIN_TRACING_V2: ${LANGCHAIN_TRACING_V2:-false}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      agent:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", ".venv/bin/python", "-c", "import httpx; httpx.get('http://localhost:8000/health').raise_for_status()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - alignai
+
+  # LangGraph agent service
+  agent:
+    build:
+      context: ./agent
+      dockerfile: Dockerfile
+    container_name: alignai-agent
+    restart: unless-stopped
+    ports:
+      - "8123:8123"
+    environment:
+      # Qdrant connection (Qdrant Cloud — set both in root .env)
+      QDRANT_URL: ${QDRANT_URL:-}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+      QDRANT_COLLECTION_NAME: eu_ai_act
+      # PostgreSQL for checkpoints
+      POSTGRES_URL: postgresql://postgres:password@postgres:5432/alignai
+      # LLM API Keys (required for agent to work)
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      # Retrieval settings
+      SIMILARITY_THRESHOLD: 0.75
+      RETRIEVAL_TOP_K: 3
+      # Observability
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
+      LANGSMITH_PROJECT_NAME: alignai-agent-local
+      LANGCHAIN_TRACING_V2: ${LANGCHAIN_TRACING_V2:-false}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", ".venv/bin/python", "-c", "import httpx; httpx.get('http://localhost:8123/ok').raise_for_status()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - alignai
+
+  # React frontend (Nginx serves static build)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:8000
+    container_name: alignai-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - alignai
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  alignai:
+    driver: bridge

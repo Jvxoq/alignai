@@ -16,10 +16,11 @@ export default function AlignPage() {
   const [featureText, setFeatureText] = useState("");
   const [messages, setMessages] = useState([]);
   const { sessionId, createSession, updateSessionTitle, fetchMessages } = useSession();
-  const { status, responseType, statusMessage, tokens, error, startStream, reset, setError } = useStream();
+  const { status, responseType, statusMessage, tokens, error, startStream, abort, reset, setError, setStatus } = useStream();
   const messagesEndRef = useRef(null);
   const messagesRef = useRef(null);
   const hasSetTitle = useRef(false);
+  const skipNextFetchRef = useRef(false);
 
   const isLoading = status === "connecting" || status === "streaming";
   const canSubmit = featureText.trim().length > 0 && !isLoading;
@@ -31,10 +32,14 @@ export default function AlignPage() {
 
   const handleAudit = async () => {
     const text = featureText.trim();
-    if (!text) return;
+    if (!text || isLoading) return;
 
     setFeatureText("");
     reset();
+    // Mark as loading immediately so a fast double-submit (e.g. typing new
+    // text and hitting Enter again) can't fire a second createSession() call
+    // while this one is still awaiting the network.
+    setStatus("connecting");
 
     setMessages((prev) => [
       ...prev,
@@ -55,6 +60,11 @@ export default function AlignPage() {
         setError("Could not create a new session. Please try again.");
         return;
       }
+      // A freshly created session has no LangGraph thread yet, so the
+      // session-switch effect's fetchMessages() would resolve to [] and wipe
+      // out the optimistic user message above. Skip that one fetch — we
+      // already know the local state is correct.
+      skipNextFetchRef.current = true;
     }
 
     startStream((signal) =>
@@ -109,23 +119,36 @@ export default function AlignPage() {
     }
 
     if (sessionId !== null) {
+      if (skipNextFetchRef.current) {
+        skipNextFetchRef.current = false;
+        return;
+      }
+      let cancelled = false;
       fetchMessages(sessionId).then((fetched) => {
+        if (cancelled) return;
         const mapped = fetched.map((m) => ({
           id: crypto.randomUUID(),
           role: m.role,
           content: m.content,
-          responseType: null,
+          responseType: m.role === "assistant"
+            ? (m.content.startsWith("# Compliance") ? "report" : "chat")
+            : null,
           timestamp: new Date(),
         }));
         setMessages(mapped);
         if (mapped.length > 0) hasSetTitle.current = true;
       });
+      return () => { cancelled = true; };
     }
   }, [sessionId, reset, fetchMessages]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, status, scrollToBottom]);
+
+  useEffect(() => {
+    return () => abort();
+  }, [abort]);
 
   useEffect(() => {
     if (messages.length === 1 && messages[0].role === "user" && sessionId && !hasSetTitle.current) {
@@ -151,7 +174,11 @@ export default function AlignPage() {
                   <div className="user-message">{msg.content}</div>
                 ) : (
                   <>
-                    {msg.responseType === "report" && <ReportDocument content={msg.content} />}
+                    {/* Anything in `messages` (historical or just-finished) is
+                        complete — done=true so it renders as parsed Markdown,
+                        not raw source. Only the live streaming bubble below
+                        is conditionally "done". */}
+                    {msg.responseType === "report" && <ReportDocument content={msg.content} done />}
                     {msg.responseType && msg.responseType !== "report" && <PlainTextDisplay text={msg.content} />}
                   </>
                 )}
@@ -173,7 +200,10 @@ export default function AlignPage() {
             </div>
           )}
 
-          {error && <ErrorDisplay error={error} />}
+          {/* The streaming/error block above already shows this error inline
+              when there's no partial content; only show this one for the
+              partial-content case (tokens present), to avoid a duplicate. */}
+          {error && tokens && <ErrorDisplay error={error} />}
           <div ref={messagesEndRef} />
         </div>
 

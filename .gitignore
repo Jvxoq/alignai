@@ -1,5 +1,14 @@
+# Environment files — never commit
+.env
+.env.*
+!.env.example
+backend/.env
+agent/.env
+frontend/.env
+
 # Python
 __pycache__/
+*.pyc
 *.py[cod]
 *$py.class
 *.so
@@ -19,20 +28,20 @@ node_modules/
 dist/
 .npm
 
-# Environment
-.env
-.env.local
-.env.*.local
-
 # IDE
-.idea/
 .vscode/
+.idea/
+.opencode/
 *.swp
 *.swo
-.DS_Store
 
-# Logs
+# OS
+.DS_Store
 *.log
 
 # LangGraph
-.langgraph/
+agent/.langgraph_api/
+
+# Data
+data/
+rough.py

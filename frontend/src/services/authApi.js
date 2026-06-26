@@ -11,13 +11,24 @@ const REQUEST_TIMEOUT_MS = 30000;
 let refreshPromise = null;
 
 async function fetchWithTimeout(url, options = {}) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const { timeoutMs = REQUEST_TIMEOUT_MS, signal: callerSignal, ...rest } = options;
+  const timeoutController = new AbortController();
+  const timeoutId = setTimeout(() => timeoutController.abort(), timeoutMs);
+  // Respect both: the caller may abort (e.g. component unmount, user cancel)
+  // independently of our own timeout ceiling — neither should silently
+  // override the other.
+  const signal = callerSignal
+    ? AbortSignal.any([callerSignal, timeoutController.signal])
+    : timeoutController.signal;
+
   try {
-    return await fetch(url, { ...options, signal: controller.signal });
+    return await fetch(url, { ...rest, signal });
   } catch (err) {
     if (err.name === "AbortError") {
-      throw new Error("Request timed out. Please try again.");
+      if (timeoutController.signal.aborted && !callerSignal?.aborted) {
+        throw new Error("Request timed out. Please try again.");
+      }
+      throw err;
     }
     throw err;
   } finally {
@@ -169,4 +180,4 @@ export async function deleteAccount() {
   return false;
 }
 
-export { getAccessToken, getRefreshToken, setTokens, clearTokens, request };
+export { getAccessToken, getRefreshToken, setTokens, clearTokens, request, extractErrorMessage };

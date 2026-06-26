@@ -2,6 +2,7 @@ import logging
 from uuid import UUID
 
 from fastapi import HTTPException, status
+from app.models.user import ChatMessage
 
 from app.core.config import get_settings
 from app.infrastructure.database import (
@@ -81,7 +82,7 @@ async def update_session_title(session_id: UUID, user_id: UUID, title: str) -> S
     return record
 
 
-async def get_session_messages(session_id: UUID, user_id: UUID) -> list[dict]:
+async def get_session_messages(session_id: UUID, user_id: UUID) -> list[ChatMessage]:
     await validate_session_ownership(session_id, user_id)
     client = get_langgraph_client()
     try:
@@ -100,7 +101,7 @@ async def get_session_messages(session_id: UUID, user_id: UUID) -> list[dict]:
                 role = _normalize_role(str(getattr(msg, "type", "")) or "")
                 content = str(getattr(msg, "content", ""))
             if role and content:
-                result.append({"role": role, "content": content})
+                result.append(ChatMessage(role=role, content=content))
         return result
     elif isinstance(thread_values, dict):
         messages = thread_values.get("messages", [])
@@ -113,7 +114,7 @@ async def get_session_messages(session_id: UUID, user_id: UUID) -> list[dict]:
                 role = _normalize_role(str(getattr(msg, "type", "")) or "")
                 content = str(getattr(msg, "content", ""))
             if role and content:
-                result.append({"role": role, "content": content})
+                result.append(ChatMessage(role=role, content=content))
         return result
     return []
 

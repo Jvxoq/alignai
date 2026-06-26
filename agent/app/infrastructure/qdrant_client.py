@@ -1,7 +1,9 @@
+import asyncio
 import logging
+from functools import lru_cache
 from typing import Any
 
-from qdrant_client import QdrantClient
+from qdrant_client import AsyncQdrantClient
 from qdrant_client.http import models as qmodels
 
 from app.core.config import get_settings
@@ -9,26 +11,34 @@ from app.core.config import get_settings
 logger = logging.getLogger(__name__)
 
 
-def get_qdrant_client() -> QdrantClient:
+@lru_cache(maxsize=1)
+def get_qdrant_client() -> AsyncQdrantClient:
     settings = get_settings()
-    if settings.qdrant_api_key:
-        return QdrantClient(url=settings.qdrant_url, api_key=settings.qdrant_api_key)
-    return QdrantClient(url=settings.qdrant_url)
+    return AsyncQdrantClient(
+        url=settings.QDRANT_URL,
+        api_key=settings.QDRANT_API_KEY,
+        timeout=30,
+    )
 
 
-def ensure_collection(client: QdrantClient) -> None:
+async def ensure_collection() -> None:
     settings = get_settings()
-    name = settings.qdrant_collection
+    client = get_qdrant_client()
+    name = settings.QDRANT_COLLECTION_NAME
 
-    if client.collection_exists(name):
+    if await client.collection_exists(name):
         logger.info("Qdrant collection %s already exists", name)
         return
 
-    logger.info("Creating Qdrant collection %s (size=3072, cosine, m=16, ef_construct=200)", name)
-    client.create_collection(
+    logger.info(
+        "Creating Qdrant collection %s (size=%d, cosine, m=16, ef_construct=200)",
+        name,
+        settings.EMBEDDING_DIMENSIONS,
+    )
+    await client.create_collection(
         collection_name=name,
         vectors_config=qmodels.VectorParams(
-            size=3072,
+            size=settings.EMBEDDING_DIMENSIONS,
             distance=qmodels.Distance.COSINE,
         ),
         hnsw_config=qmodels.HnswConfigDiff(
@@ -37,27 +47,27 @@ def ensure_collection(client: QdrantClient) -> None:
         ),
     )
 
-    client.create_payload_index(
+    await client.create_payload_index(
         collection_name=name,
         field_name="article_number",
         field_schema=qmodels.PayloadSchemaType.KEYWORD,
     )
-    client.create_payload_index(
+    await client.create_payload_index(
         collection_name=name,
         field_name="chapter_number",
         field_schema=qmodels.PayloadSchemaType.KEYWORD,
     )
-    client.create_payload_index(
+    await client.create_payload_index(
         collection_name=name,
         field_name="section_number",
         field_schema=qmodels.PayloadSchemaType.KEYWORD,
     )
-    client.create_payload_index(
+    await client.create_payload_index(
         collection_name=name,
         field_name="is_recital",
         field_schema=qmodels.PayloadSchemaType.BOOL,
     )
-    client.create_payload_index(
+    await client.create_payload_index(
         collection_name=name,
         field_name="recital_number",
         field_schema=qmodels.PayloadSchemaType.INTEGER,
@@ -65,23 +75,31 @@ def ensure_collection(client: QdrantClient) -> None:
     logger.info("Payload indexes created for %s", name)
 
 
-def search(query_vector: list[float], top_k: int | None = None) -> list[dict]:
+async def search_chunks(
+    query_vector: list[float],
+    top_k: int | None = None,
+    filters: qmodels.Filter | None = None,
+) -> list[dict]:
     settings = get_settings()
-    limit = top_k if top_k is not None else settings.retrieval_top_k
     client = get_qdrant_client()
-    results = client.search(
-        collection_name=settings.qdrant_collection,
-        query_vector=query_vector,
-        limit=limit,
-    )
+    limit = top_k if top_k is not None else settings.RETRIEVAL_TOP_K
+    async with asyncio.timeout(30):
+        results = await client.query_points(
+            collection_name=settings.QDRANT_COLLECTION_NAME,
+            query=query_vector,
+            limit=limit,
+            query_filter=filters,
+            with_payload=True,
+        )
     return [
-        {"id": str(hit.id), "score": hit.score, "payload": hit.payload or {}}
-        for hit in results
+        {"id": str(point.id), "score": point.score, "payload": point.payload or {}}
+        for point in results.points
     ]
 
 
-def upsert_chunks(client: QdrantClient, chunks: list[dict[str, Any]]) -> None:
+async def upsert_chunks(chunks: list[dict[str, Any]]) -> None:
     settings = get_settings()
+    client = get_qdrant_client()
     if not chunks:
         return
 
@@ -94,7 +112,8 @@ def upsert_chunks(client: QdrantClient, chunks: list[dict[str, Any]]) -> None:
         for chunk in chunks
     ]
 
-    client.upsert(
-        collection_name=settings.qdrant_collection,
-        points=points,
-    )
+    async with asyncio.timeout(60):
+        await client.upsert(
+            collection_name=settings.QDRANT_COLLECTION_NAME,
+            points=points,
+        )
