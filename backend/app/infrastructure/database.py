@@ -1,8 +1,10 @@
 from functools import lru_cache
+from typing import Any, cast
 from uuid import UUID, uuid4
 
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, func, select, update, delete
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
+from sqlalchemy.engine import CursorResult
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
@@ -162,7 +164,7 @@ async def update_session_title(session_id: UUID, user_id: UUID, title: str) -> S
         record = result.scalar_one_or_none()
         if record is None:
             return None
-        record.title = title
+        record.title = title  # type: ignore[assignment]
         await db.commit()
         await db.refresh(record)
         return record
@@ -171,19 +173,19 @@ async def update_session_title(session_id: UUID, user_id: UUID, title: str) -> S
 async def delete_session(session_id: UUID, user_id: UUID) -> bool:
     factory = _get_session_factory()
     async with factory() as db:
-        result = await db.execute(
+        cursor = cast(CursorResult[Any], await db.execute(
             delete(SessionRecord).where(
                 SessionRecord.id == session_id,
                 SessionRecord.user_id == user_id,
             )
-        )
+        ))
         await db.commit()
-        return result.rowcount > 0
+        return cursor.rowcount > 0
 
 
 async def delete_user(user_id: UUID) -> bool:
     factory = _get_session_factory()
     async with factory() as db:
-        result = await db.execute(delete(UserRecord).where(UserRecord.id == user_id))
+        cursor = cast(CursorResult[Any], await db.execute(delete(UserRecord).where(UserRecord.id == user_id)))
         await db.commit()
-        return result.rowcount > 0
+        return cursor.rowcount > 0
