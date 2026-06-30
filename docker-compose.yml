@@ -98,7 +98,7 @@ services:
       # Qdrant connection (Qdrant Cloud — set both in root .env)
       QDRANT_URL: ${QDRANT_URL:-}
       QDRANT_API_KEY: ${QDRANT_API_KEY:-}
-      QDRANT_COLLECTION_NAME: eu_ai_act
+      QDRANT_COLLECTION_NAME: alignai_docs
       # PostgreSQL for checkpoints
       POSTGRES_URL: postgresql://postgres:password@postgres:5432/alignai
       # LLM API Keys (required for agent to work)

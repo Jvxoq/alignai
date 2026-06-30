@@ -1,0 +1,103 @@
+## Render Blueprint — backend + agent (both free tier).
+## Frontend is served separately (Render Static Site or your own CDN).
+##
+## Deploy steps:
+##   1. Push this file to your repo root.
+##   2. Render dashboard → New → Blueprint → point at this repo.
+##   3. Before clicking Deploy, set these env vars in the dashboard
+##      (marked sync:false below — Render will prompt you for them):
+##        alignai-backend:
+##          POSTGRES_URL  →  copy the Internal Database URL from the alignai-db
+##                           page and change "postgresql://" to
+##                           "postgresql+asyncpg://"
+##          CORS_ORIGINS  →  replace placeholder with your real frontend URL,
+##                           e.g. '["https://alignai-frontend.onrender.com"]'
+##        alignai-agent:
+##          POSTGRES_URL  →  copy the Internal Database URL from the alignai-db
+##                           page (leave the scheme as "postgresql://")
+##          QDRANT_URL, QDRANT_API_KEY, GROQ_API_KEY, GEMINI_API_KEY
+##   4. After first deploy, pin SECRET_KEY: copy the generated value from the
+##      backend service env vars and paste it back as a fixed value so deploys
+##      don't rotate it and log users out.
+
+databases:
+  - name: alignai-db
+    databaseName: alignai
+    user: alignai
+    plan: free
+
+services:
+  # ── Backend (public Web Service) ─────────────────────────────────────────────
+  - type: web
+    name: alignai-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      # Must use postgresql+asyncpg:// scheme — SQLAlchemy async engine requirement.
+      # Copy the Internal DB URL from alignai-db and swap the scheme before deploy.
+      - key: POSTGRES_URL
+        sync: false
+      - key: LANGGRAPH_SERVER_URL
+        fromService:
+          name: alignai-agent
+          type: web
+          property: url
+      - key: LANGGRAPH_CONNECTION_TIMEOUT
+        value: "10"
+      - key: LANGGRAPH_READ_TIMEOUT
+        value: "60"
+      - key: SECRET_KEY
+        generateValue: true
+      # Set to your real frontend URL before deploying — browser requests will
+      # be blocked by CORS until this matches the actual frontend origin.
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: LANGCHAIN_TRACING_V2
+        value: "false"
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: "7"
+      - key: MAX_MESSAGE_LENGTH
+        value: "2000"
+      - key: USER_MESSAGE_THRESHOLD
+        value: "50"
+
+  # ── Agent (public Web Service — free tier) ───────────────────────────────────
+  - type: web
+    name: alignai-agent
+    runtime: docker
+    dockerfilePath: ./agent/Dockerfile
+    dockerContext: ./agent
+    plan: free
+    healthCheckPath: /ok
+    envVars:
+      # Plain postgresql:// scheme — used by LangGraph's psycopg checkpoint store.
+      # Copy the Internal DB URL from alignai-db (no scheme change needed).
+      - key: POSTGRES_URL
+        sync: false
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
+      - key: QDRANT_COLLECTION_NAME
+        value: alignai_docs
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ENVIRONMENT
+        value: production
+      - key: LANGCHAIN_TRACING_V2
+        value: "false"
+      - key: SIMILARITY_THRESHOLD
+        value: "0.75"
+      - key: RETRIEVAL_TOP_K
+        value: "3"

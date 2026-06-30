@@ -19,6 +19,7 @@ Three independent services in a monorepo — no shared Python imports, no single
 - **Logging**: `from pythonjsonlogger.json import JsonFormatter` in `core/logging.py` — never `print()`.
 - **Async**: `async def` in all FastAPI routes/services and LangGraph nodes.
 - **Python deps**: `uv` + per-service `pyproject.toml` / `uv.lock` — never `pip install` or `requirements.txt`.
+- **Ingestion dep**: `pymupdf` is the only PDF parser used in `agent/ingest.py`. It is declared in `agent/pyproject.toml`. No other PDF libraries (`pypdf`, `pdfplumber`, `pdfminer`) should be added.
 - **Frontend deps**: `npm` in `frontend/package.json` only.
 </code_style>
 
