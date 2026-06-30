@@ -45,3 +45,5 @@ agent/.langgraph_api/
 # Data
 data/
 rough.py
+.claude/
+langgraph-skill.md
