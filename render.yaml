@@ -44,7 +44,7 @@ services:
         fromService:
           name: alignai-agent
           type: web
-          property: url
+          property: hostport
       - key: LANGGRAPH_CONNECTION_TIMEOUT
         value: "10"
       - key: LANGGRAPH_READ_TIMEOUT

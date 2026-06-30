@@ -53,6 +53,13 @@ class Settings(BaseSettings):
     def is_development(self) -> bool:
         return self.ENVIRONMENT == "development"
 
+    @field_validator("LANGGRAPH_SERVER_URL")
+    @classmethod
+    def ensure_langgraph_url_scheme(cls, v: str) -> str:
+        if v and not v.startswith(("http://", "https://")):
+            return f"https://{v}"
+        return v
+
     @field_validator("SECRET_KEY")
     @classmethod
     def secret_key_must_be_strong(cls, v: str) -> str:
