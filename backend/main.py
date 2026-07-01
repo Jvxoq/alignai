@@ -1,3 +1,5 @@
+import asyncio
+import contextlib
 import logging
 from contextlib import asynccontextmanager
 
@@ -13,6 +15,7 @@ from app.api.routes.users import router as users_router
 from app.core.config import settings
 from app.core.limiter import limiter
 from app.core.logging import setup_logging
+from app.infrastructure.keep_alive import run_keep_alive_loop
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +23,13 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_logging()
-    yield
+    keep_alive_task = asyncio.create_task(run_keep_alive_loop())
+    try:
+        yield
+    finally:
+        keep_alive_task.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await keep_alive_task
 
 
 app = FastAPI(

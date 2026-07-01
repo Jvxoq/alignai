@@ -54,6 +54,8 @@ services:
       LANGGRAPH_SERVER_URL: http://agent:8123
       LANGGRAPH_CONNECTION_TIMEOUT: 10
       LANGGRAPH_READ_TIMEOUT: 60
+      # No need to keep a local agent container warm.
+      AGENT_KEEP_ALIVE_ENABLED: "false"
       # Auth (use strong keys in production!)
       SECRET_KEY: dev-secret-key-change-in-production-minimum-32-characters-long
       ACCESS_TOKEN_EXPIRE_MINUTES: 30

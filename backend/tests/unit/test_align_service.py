@@ -1,5 +1,6 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
+import httpx
 import pytest
 from langchain_core.messages import AIMessage
 
@@ -7,6 +8,7 @@ from app.models.responses import DoneEvent, ErrorEvent, StartEvent, StatusEvent,
 from app.services.align_service import (
     _extract_message_text,
     _format_sse,
+    _stream_from_langgraph,
     stream_align,
 )
 
@@ -297,6 +299,43 @@ class TestStreamAlign:
             error_events = [e for e in events if "event: error" in e]
             assert len(error_events) == 1
             assert '"code":503' in error_events[0]
+
+    @pytest.mark.asyncio
+    async def test_handles_httpx_connect_error(self):
+        """DNS/connect failures during an agent cold start surface as httpx
+        errors, not stdlib ConnectionError — must still map to a 503."""
+        mock_request = MagicMock(session_id="test-session", user_message="test")
+
+        with patch("app.services.align_service._stream_from_langgraph") as mock_langgraph:
+            mock_langgraph.side_effect = httpx.ConnectError("Name or service not known")
+
+            events = []
+            async for sse_chunk in stream_align(mock_request):
+                events.append(sse_chunk)
+
+            error_events = [e for e in events if "event: error" in e]
+            assert len(error_events) == 1
+            assert '"code":503' in error_events[0]
+            assert "unavailable" in error_events[0]
+
+    @pytest.mark.asyncio
+    async def test_handles_httpx_timeout_error(self):
+        """A slow cold-start wake-up can exceed the connect/read timeout as an
+        httpx.TimeoutException, which isn't a stdlib TimeoutError — must still
+        map to a 504."""
+        mock_request = MagicMock(session_id="test-session", user_message="test")
+
+        with patch("app.services.align_service._stream_from_langgraph") as mock_langgraph:
+            mock_langgraph.side_effect = httpx.ConnectTimeout("Connect timed out")
+
+            events = []
+            async for sse_chunk in stream_align(mock_request):
+                events.append(sse_chunk)
+
+            error_events = [e for e in events if "event: error" in e]
+            assert len(error_events) == 1
+            assert '"code":504' in error_events[0]
+            assert "timeout" in error_events[0]
 
     @pytest.mark.asyncio
     async def test_handles_exception_with_server_status_code(self):
@@ -630,3 +669,42 @@ class TestStreamAlign:
             start_events = [e for e in events if "event: start" in e]
             assert len(start_events) == 1
             assert '"response_type":"report"' in start_events[0]
+
+
+class TestStreamFromLangGraphRetry:
+    """Verifies the retry-with-backoff decorator itself: a cold-start agent
+    that fails to connect a couple of times before waking up should recover
+    without the caller ever seeing an exception."""
+
+    @pytest.mark.asyncio
+    async def test_retries_and_recovers_from_transient_connect_errors(self):
+        call_count = 0
+
+        def flaky_stream(**kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count < 3:
+                raise httpx.ConnectError("agent is still waking up")
+            return "connected"
+
+        mock_client = MagicMock()
+        mock_client.runs.stream.side_effect = flaky_stream
+
+        with patch("app.services.align_service.get_langgraph_client", return_value=mock_client), \
+                patch("asyncio.sleep", new=AsyncMock()):
+            result = await _stream_from_langgraph("session-1", "hello")
+
+        assert result == "connected"
+        assert call_count == 3
+
+    @pytest.mark.asyncio
+    async def test_gives_up_after_exhausting_retries(self):
+        mock_client = MagicMock()
+        mock_client.runs.stream.side_effect = httpx.ConnectError("agent never woke up")
+
+        with patch("app.services.align_service.get_langgraph_client", return_value=mock_client), \
+                patch("asyncio.sleep", new=AsyncMock()):
+            with pytest.raises(httpx.ConnectError):
+                await _stream_from_langgraph("session-1", "hello")
+
+        assert mock_client.runs.stream.call_count == 5

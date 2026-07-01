@@ -49,6 +49,15 @@ services:
         value: "10"
       - key: LANGGRAPH_READ_TIMEOUT
         value: "60"
+      # Keeps the free-tier agent warm by pinging it well within Render's
+      # ~15-minute idle-sleep window, so it should rarely be asleep when a
+      # real request comes in.
+      - key: AGENT_KEEP_ALIVE_ENABLED
+        value: "true"
+      - key: AGENT_KEEP_ALIVE_INTERVAL_SECONDS
+        value: "600"
+      - key: AGENT_KEEP_ALIVE_TIMEOUT_SECONDS
+        value: "30"
       - key: SECRET_KEY
         generateValue: true
       # Set to your real frontend URL before deploying — browser requests will

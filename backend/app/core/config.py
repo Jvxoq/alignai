@@ -18,6 +18,14 @@ class Settings(BaseSettings):
     LANGGRAPH_CONNECTION_TIMEOUT: int = 10
     LANGGRAPH_READ_TIMEOUT: int = 60
 
+    # Keep-alive: periodically pings the LangGraph agent's health endpoint so
+    # a free-tier instance never sits idle long enough to spin down. Render's
+    # free web services sleep after ~15 min without inbound traffic, so the
+    # interval must stay comfortably under that.
+    AGENT_KEEP_ALIVE_ENABLED: bool = True
+    AGENT_KEEP_ALIVE_INTERVAL_SECONDS: int = 600
+    AGENT_KEEP_ALIVE_TIMEOUT_SECONDS: int = 30
+
     # Database
     POSTGRES_URL: str
 
