@@ -2,6 +2,8 @@ import logging
 from collections.abc import AsyncGenerator
 from typing import Literal
 
+import httpcore
+import httpx
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from app.infrastructure.langgraph_client import get_langgraph_client
@@ -27,10 +29,20 @@ _STREAMING_NODES = {"generate"}
 _FINAL_TOKEN_NODES = {"fallback", "intent"}
 
 
+# DNS/refused-connection errors (agent host not resolvable / not accepting
+# connections yet) and slow-wake timeouts (agent accepted the TCP connection
+# but hasn't finished cold-starting) are both symptoms of the same "agent is
+# asleep" condition — a sleeping free-tier instance can take several seconds
+# to spin back up, so both classes are worth retrying with backoff.
+_CONNECT_ERRORS = (ConnectionError, OSError, httpx.ConnectError, httpcore.ConnectError)
+_TIMEOUT_ERRORS = (TimeoutError, httpx.TimeoutException, httpcore.TimeoutException)
+_RETRYABLE_ERRORS = _CONNECT_ERRORS + _TIMEOUT_ERRORS
+
+
 @retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=2, max=10),
-    retry=retry_if_exception_type((ConnectionError, TimeoutError, OSError)),
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=1, min=2, max=15),
+    retry=retry_if_exception_type(_RETRYABLE_ERRORS),
     reraise=True,
 )
 async def _stream_from_langgraph(
@@ -135,9 +147,9 @@ async def stream_align(request: AlignRequest) -> AsyncGenerator[str, None]:
 
         yield _format_sse(DoneEvent())
 
-    except (ConnectionError, TimeoutError, OSError) as exc:
+    except _RETRYABLE_ERRORS as exc:
         logger.exception("LangGraph stream failed after retries")
-        if isinstance(exc, TimeoutError):
+        if isinstance(exc, _TIMEOUT_ERRORS):
             yield _format_sse(ErrorEvent(code=504, message="LangGraph server timeout"))
         else:
             yield _format_sse(ErrorEvent(code=503, message="LangGraph server unavailable"))
