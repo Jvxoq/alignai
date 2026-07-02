@@ -10,7 +10,6 @@ dependencies = [
     "google-genai>=1.0.0",
     "pydantic-settings>=2.6.0",
     "python-json-logger>=3.2.0",
-    "langgraph-cli[inmem]>=0.4.30",
     "pymupdf>=1.24.0",
     "langchain-groq>=0.3.0",
     "pymupdf4llm>=1.27.2.3",
@@ -23,6 +22,9 @@ dependencies = [
 dev = [
     "pytest>=8.3.0",
     "pytest-asyncio>=0.24.0",
+    # CLI used to run `langgraph dev` locally and generate the prod Dockerfile.
+    # Not a runtime dependency — production is served by the langchain/langgraph-api image.
+    "langgraph-cli[inmem]>=0.4.30",
 ]
 
 [tool.pytest.ini_options]

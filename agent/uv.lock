@@ -17,7 +17,6 @@ dependencies = [
     { name = "langchain-groq" },
     { name = "langgraph" },
     { name = "langgraph-checkpoint-postgres" },
-    { name = "langgraph-cli", extra = ["inmem"] },
     { name = "psycopg", extra = ["binary"] },
     { name = "pydantic-settings" },
     { name = "pymupdf" },
@@ -29,6 +28,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "langgraph-cli", extra = ["inmem"] },
     { name = "pytest" },
     { name = "pytest-asyncio" },
 ]
@@ -40,7 +40,6 @@ requires-dist = [
     { name = "langchain-groq", specifier = ">=0.3.0" },
     { name = "langgraph", specifier = ">=0.2.0" },
     { name = "langgraph-checkpoint-postgres", specifier = ">=2.0.0" },
-    { name = "langgraph-cli", extras = ["inmem"], specifier = ">=0.4.30" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2.0" },
     { name = "pydantic-settings", specifier = ">=2.6.0" },
     { name = "pymupdf", specifier = ">=1.24.0" },
@@ -52,6 +51,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "langgraph-cli", extras = ["inmem"], specifier = ">=0.4.30" },
     { name = "pytest", specifier = ">=8.3.0" },
     { name = "pytest-asyncio", specifier = ">=0.24.0" },
 ]
