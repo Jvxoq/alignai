@@ -12,10 +12,12 @@
 ##                           "postgresql+asyncpg://"
 ##          CORS_ORIGINS  →  replace placeholder with your real frontend URL,
 ##                           e.g. '["https://alignai-frontend.onrender.com"]'
-##        alignai-agent:
-##          POSTGRES_URL  →  copy the Internal Database URL from the alignai-db
-##                           page (leave the scheme as "postgresql://")
+##        alignai-agent (LangGraph platform server — needs Redis + DB + license):
+##          REDIS_URI         →  Internal URL of your Render Key-Value instance
+##          LANGSMITH_API_KEY →  from smith.langchain.com (platform license check;
+##                               the server will not start without it)
 ##          QDRANT_URL, QDRANT_API_KEY, GROQ_API_KEY, GEMINI_API_KEY
+##          (DATABASE_URI is wired automatically from alignai-db below)
 ##   4. After first deploy, pin SECRET_KEY: copy the generated value from the
 ##      backend service env vars and paste it back as a fixed value so deploys
 ##      don't rotate it and log users out.
@@ -88,9 +90,20 @@ services:
     plan: free
     healthCheckPath: /ok
     envVars:
-      # Plain postgresql:// scheme — used by LangGraph's psycopg checkpoint store.
-      # Copy the Internal DB URL from alignai-db (no scheme change needed).
-      - key: POSTGRES_URL
+      # --- LangGraph platform server persistence (server-managed) ---
+      # DATABASE_URI: Postgres-backed thread + checkpoint store. Wired straight
+      # from the blueprint-managed alignai-db (plain postgresql:// scheme).
+      - key: DATABASE_URI
+        fromDatabase:
+          name: alignai-db
+          property: connectionString
+      # REDIS_URI: task queue / pub-sub. Paste the Internal URL of your Render
+      # Key-Value instance. (If you add it to this blueprint as a `type: keyvalue`
+      # service, replace this with a fromService connectionString reference.)
+      - key: REDIS_URI
+        sync: false
+      # LANGSMITH_API_KEY: the platform server's license check — required to boot.
+      - key: LANGSMITH_API_KEY
         sync: false
       - key: QDRANT_URL
         sync: false
