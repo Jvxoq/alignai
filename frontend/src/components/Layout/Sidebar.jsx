@@ -39,7 +39,12 @@ export default function Sidebar() {
           </button>
         </div>
         {isLoading ? (
-          <div className="loading">Loading...</div>
+          <div className="session-skeleton" role="status">
+            <span className="sr-only">Loading sessions...</span>
+            <div className="session-skeleton-item" />
+            <div className="session-skeleton-item" />
+            <div className="session-skeleton-item" />
+          </div>
         ) : sessions.length === 0 ? (
           <div className="no-sessions">
             <p>No sessions yet</p>
