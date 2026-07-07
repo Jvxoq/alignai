@@ -49,6 +49,7 @@ class Settings(BaseSettings):
     CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost"]
     MAX_MESSAGE_LENGTH: int = 2000
     USER_MESSAGE_THRESHOLD: int = 50
+    MAX_SESSIONS_PER_USER: int = 3
     SIMILARITY_THRESHOLD: float = 0.75
     RETRIEVAL_TOP_K: int = 3
     DEV_MODE: bool = False
