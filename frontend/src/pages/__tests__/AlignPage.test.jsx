@@ -11,6 +11,7 @@ vi.mock("../../services/alignApi");
 function mockSession(overrides = {}) {
   useSession.mockReturnValue({
     sessionId: null,
+    sessions: [],
     createSession: vi.fn(),
     updateSessionTitle: vi.fn(),
     fetchMessages: vi.fn().mockResolvedValue([]),
@@ -70,6 +71,22 @@ describe("AlignPage — loading an existing session", () => {
     expect(await screen.findByText("What about Article 9?")).toBeInTheDocument();
     expect(await screen.findByText("Details here.")).toBeInTheDocument();
   });
+
+  it("shows a loading skeleton instead of an empty state while history is being fetched", async () => {
+    let resolveFetch;
+    const fetchMessages = vi.fn(() => new Promise((resolve) => { resolveFetch = resolve; }));
+    mockSession({ sessionId: "sess-1", fetchMessages });
+
+    render(<AlignPage />);
+
+    // Regression: must never render the bare empty-messages state while the
+    // fetch is in flight — that's the "flash of no messages" bug.
+    expect(screen.getByRole("status", { name: /loading conversation/i })).toBeInTheDocument();
+
+    resolveFetch([{ role: "user", content: "Older question" }]);
+    expect(await screen.findByText("Older question")).toBeInTheDocument();
+    expect(screen.queryByRole("status", { name: /loading conversation/i })).not.toBeInTheDocument();
+  });
 });
 
 describe("AlignPage — submitting with an existing session", () => {
@@ -86,9 +103,9 @@ describe("AlignPage — submitting with an existing session", () => {
     );
 
     render(<AlignPage />);
-    const textarea = screen.getByPlaceholderText(/Describe your feature/i);
+    const textarea = await screen.findByPlaceholderText(/Type your message/i);
     await userEvent.type(textarea, "Collects gyroscope data in background");
-    await userEvent.click(screen.getByRole("button", { name: /Audit for Compliance/i }));
+    await userEvent.click(screen.getByRole("button", { name: /Send/i }));
 
     expect(await screen.findByText("Collects gyroscope data in background")).toBeInTheDocument();
 
@@ -113,7 +130,7 @@ describe("AlignPage — submitting with an existing session", () => {
     postAlign.mockResolvedValue(sseStream([sse("start", { response_type: "chat" }), sse("done")]));
 
     render(<AlignPage />);
-    const textarea = screen.getByPlaceholderText(/Describe your feature/i);
+    const textarea = await screen.findByPlaceholderText(/Type your message/i);
 
     await userEvent.type(textarea, "hello{Shift>}{Enter}{/Shift}");
     expect(postAlign).not.toHaveBeenCalled();
@@ -200,9 +217,9 @@ describe("AlignPage — error handling", () => {
     );
 
     render(<AlignPage />);
-    const textarea = screen.getByPlaceholderText(/Describe your feature/i);
+    const textarea = await screen.findByPlaceholderText(/Type your message/i);
     await userEvent.type(textarea, "Trigger a server error");
-    await userEvent.click(screen.getByRole("button", { name: /Audit for Compliance/i }));
+    await userEvent.click(screen.getByRole("button", { name: /Send/i }));
 
     expect(await screen.findByText("Server error")).toBeInTheDocument();
     expect(screen.getAllByText("Server error")).toHaveLength(1);
@@ -219,9 +236,9 @@ describe("AlignPage — error handling", () => {
     );
 
     render(<AlignPage />);
-    const textarea = screen.getByPlaceholderText(/Describe your feature/i);
+    const textarea = await screen.findByPlaceholderText(/Type your message/i);
     await userEvent.type(textarea, "Trigger a mid-stream error");
-    await userEvent.click(screen.getByRole("button", { name: /Audit for Compliance/i }));
+    await userEvent.click(screen.getByRole("button", { name: /Send/i }));
 
     expect(await screen.findByText("Server error mid-stream")).toBeInTheDocument();
     expect(screen.getAllByText("Server error mid-stream")).toHaveLength(1);

@@ -58,6 +58,10 @@ export function SessionProvider({ children }) {
         localStorage.setItem(STORAGE_KEY, data.id);
         return data.id;
       }
+      // 409 = the per-user session limit was hit (backend MAX_SESSIONS_PER_USER).
+      if (response && response.status === 409) {
+        return "LIMIT_REACHED";
+      }
     } catch (err) {
       console.error("Failed to create session:", err);
     }
