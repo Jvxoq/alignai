@@ -1,0 +1,22 @@
+# DEVELOPMENT image — Vite dev server with hot-module reload. Source is
+# bind-mounted by docker-compose.override.yml so edits show instantly.
+# VITE_API_BASE_URL is read at RUNTIME here (not baked in like the prod build),
+# so the same image works against any backend URL.
+# For the PRODUCTION build (Nginx serving a static bundle) see ./Dockerfile.
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install all deps incl. devDependencies (vite, vitest, eslint) for layer caching.
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copy source so the image runs standalone; the compose bind-mount overlays it
+# at runtime for HMR.
+COPY . .
+
+EXPOSE 5173
+
+# --host 0.0.0.0 makes the dev server reachable from outside the container.
+# Port 5173 is set in vite.config.js.
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

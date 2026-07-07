@@ -1,0 +1,52 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# DEVELOPMENT overlay — auto-merged on top of docker-compose.yml by a bare
+# `docker compose up`. It swaps the production images for the `.dev` variants,
+# bind-mounts your source for hot-reload, and restores development env.
+#
+#   Development (this file, default):   docker compose up --build   (make dev)
+#   Production parity (base only):      docker compose -f docker-compose.yml up  (make prod)
+#
+# Bind-mount note: mounting the host source over /app would also clobber the
+# container's Linux-built deps. The anonymous volumes (`- /app/.venv`,
+# `- /app/node_modules`) shadow those paths so the container keeps its own.
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend:/app        # live source → uvicorn --reload restarts on save
+      - /app/.venv            # keep the container's Linux venv (don't clobber)
+    environment:
+      ENVIRONMENT: development
+      DEBUG: "true"
+      CORS_ORIGINS: '["http://localhost", "http://localhost:5173"]'
+
+  agent:
+    build:
+      context: ./agent
+      dockerfile: Dockerfile.dev
+    volumes:
+      # Mount only source + tests — NOT the whole dir, which would pull in the dev
+      # server's own .langgraph_api state and make its file-watcher loop.
+      - ./agent/app:/app/app      # live source → langgraph dev reloads on save
+      - ./agent/tests:/app/tests  # so `pytest` finds tests inside the container
+    # The dev server is in-memory; REDIS_URI/DATABASE_URI from the base file are
+    # simply ignored, and LANGSMITH_API_KEY is optional here.
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    # Run Vite on port 80 so the base 80:80 mapping and healthcheck still apply —
+    # dev and prod share the same URL: http://localhost
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "80"]
+    volumes:
+      - ./frontend:/app       # live source → hot-module reload
+      - /app/node_modules     # keep the container's installed deps
+    environment:
+      # Read at runtime by the Vite dev server (prod bakes this in as a build arg).
+      VITE_API_BASE_URL: http://localhost:8000
+    # Vite serves the app root, so the base wget healthcheck on :80 works as-is.
