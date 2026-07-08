@@ -57,8 +57,12 @@ export function useStream() {
               setStatus("error");
               break;
           }
-        } catch {
-          // skip malformed SSE lines
+        } catch (err) {
+          // The backend only ever sends well-formed JSON payloads; a parse
+          // failure here means a truncated chunk or a proxy/dev-server
+          // mangling the stream. Surfacing it (without breaking the stream)
+          // makes that visible instead of silently dropping tokens.
+          console.warn("Skipping malformed SSE line:", line, err);
         }
       }
     }
