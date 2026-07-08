@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
 import pytest
@@ -7,7 +7,9 @@ from fastapi import HTTPException
 from app.services.session_service import (
     check_message_threshold,
     create_user_session,
+    delete_langgraph_thread,
     delete_user_session,
+    get_session_messages,
     increment_session_messages,
     list_user_sessions,
     update_session_title,
@@ -248,3 +250,198 @@ class TestUpdateSessionTitle:
                 await update_session_title(session_id, user_id, "New Title")
 
             assert exc_info.value.status_code == 404
+
+
+class TestGetSessionMessages:
+    def _own_session(self, mock_get_owner, session_id, user_id):
+        mock_record = MagicMock()
+        mock_record.id = session_id
+        mock_record.user_id = user_id
+        mock_get_owner.return_value = mock_record
+
+    @pytest.mark.asyncio
+    async def test_rejects_non_owner_before_hitting_langgraph(self):
+        session_id = uuid4()
+        user_id = uuid4()
+
+        with (
+            patch("app.services.session_service.get_session_with_owner") as mock_get_owner,
+            patch("app.services.session_service.get_langgraph_client") as mock_client_getter,
+        ):
+            mock_get_owner.return_value = None
+
+            with pytest.raises(HTTPException) as exc_info:
+                await get_session_messages(session_id, user_id)
+
+            assert exc_info.value.status_code == 404
+            mock_client_getter.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_list_shaped_thread_values_dict_messages(self):
+        session_id = uuid4()
+        user_id = uuid4()
+
+        with (
+            patch("app.services.session_service.get_session_with_owner") as mock_get_owner,
+            patch("app.services.session_service.get_langgraph_client") as mock_client_getter,
+        ):
+            self._own_session(mock_get_owner, session_id, user_id)
+            mock_client = MagicMock()
+            mock_client.threads.get_state = AsyncMock(return_value={
+                "values": [
+                    {"type": "human", "content": "What is Article 5?"},
+                    {"type": "ai", "content": "Article 5 prohibits..."},
+                ]
+            })
+            mock_client_getter.return_value = mock_client
+
+            result = await get_session_messages(session_id, user_id)
+
+            assert len(result) == 2
+            assert result[0].role == "user"
+            assert result[0].content == "What is Article 5?"
+            assert result[1].role == "assistant"
+            assert result[1].content == "Article 5 prohibits..."
+
+    @pytest.mark.asyncio
+    async def test_dict_shaped_thread_values_dict_messages(self):
+        session_id = uuid4()
+        user_id = uuid4()
+
+        with (
+            patch("app.services.session_service.get_session_with_owner") as mock_get_owner,
+            patch("app.services.session_service.get_langgraph_client") as mock_client_getter,
+        ):
+            self._own_session(mock_get_owner, session_id, user_id)
+            mock_client = MagicMock()
+            mock_client.threads.get_state = AsyncMock(return_value={
+                "values": {
+                    "messages": [
+                        {"type": "human", "content": "Hello"},
+                        {"role": "system", "content": "System note"},
+                    ]
+                }
+            })
+            mock_client_getter.return_value = mock_client
+
+            result = await get_session_messages(session_id, user_id)
+
+            assert len(result) == 2
+            assert result[0].role == "user"
+            assert result[0].content == "Hello"
+            assert result[1].role == "system"
+            assert result[1].content == "System note"
+
+    @pytest.mark.asyncio
+    async def test_object_shaped_messages_use_attributes(self):
+        session_id = uuid4()
+        user_id = uuid4()
+
+        class FakeMsg:
+            def __init__(self, type_, content):
+                self.type = type_
+                self.content = content
+
+        with (
+            patch("app.services.session_service.get_session_with_owner") as mock_get_owner,
+            patch("app.services.session_service.get_langgraph_client") as mock_client_getter,
+        ):
+            self._own_session(mock_get_owner, session_id, user_id)
+            mock_client = MagicMock()
+            mock_client.threads.get_state = AsyncMock(return_value={
+                "values": [FakeMsg("ai", "An object-based message")]
+            })
+            mock_client_getter.return_value = mock_client
+
+            result = await get_session_messages(session_id, user_id)
+
+            assert len(result) == 1
+            assert result[0].role == "assistant"
+            assert result[0].content == "An object-based message"
+
+    @pytest.mark.asyncio
+    async def test_messages_missing_role_or_content_are_dropped(self):
+        session_id = uuid4()
+        user_id = uuid4()
+
+        with (
+            patch("app.services.session_service.get_session_with_owner") as mock_get_owner,
+            patch("app.services.session_service.get_langgraph_client") as mock_client_getter,
+        ):
+            self._own_session(mock_get_owner, session_id, user_id)
+            mock_client = MagicMock()
+            mock_client.threads.get_state = AsyncMock(return_value={
+                "values": [
+                    {"type": "", "content": "no type"},
+                    {"type": "human", "content": ""},
+                    {"type": "human", "content": "kept"},
+                ]
+            })
+            mock_client_getter.return_value = mock_client
+
+            result = await get_session_messages(session_id, user_id)
+
+            assert len(result) == 1
+            assert result[0].content == "kept"
+
+    @pytest.mark.asyncio
+    async def test_unrecognized_thread_values_shape_returns_empty(self):
+        session_id = uuid4()
+        user_id = uuid4()
+
+        with (
+            patch("app.services.session_service.get_session_with_owner") as mock_get_owner,
+            patch("app.services.session_service.get_langgraph_client") as mock_client_getter,
+        ):
+            self._own_session(mock_get_owner, session_id, user_id)
+            mock_client = MagicMock()
+            mock_client.threads.get_state = AsyncMock(return_value={"values": "unexpected string"})
+            mock_client_getter.return_value = mock_client
+
+            result = await get_session_messages(session_id, user_id)
+
+            assert result == []
+
+    @pytest.mark.asyncio
+    async def test_langgraph_get_state_failure_returns_empty_list(self):
+        session_id = uuid4()
+        user_id = uuid4()
+
+        with (
+            patch("app.services.session_service.get_session_with_owner") as mock_get_owner,
+            patch("app.services.session_service.get_langgraph_client") as mock_client_getter,
+        ):
+            self._own_session(mock_get_owner, session_id, user_id)
+            mock_client = MagicMock()
+            mock_client.threads.get_state = AsyncMock(side_effect=RuntimeError("langgraph unreachable"))
+            mock_client_getter.return_value = mock_client
+
+            result = await get_session_messages(session_id, user_id)
+
+            assert result == []
+
+
+class TestDeleteLanggraphThread:
+    @pytest.mark.asyncio
+    async def test_deletes_thread(self):
+        session_id = uuid4()
+
+        with patch("app.services.session_service.get_langgraph_client") as mock_client_getter:
+            mock_client = MagicMock()
+            mock_client.threads.delete = AsyncMock(return_value=None)
+            mock_client_getter.return_value = mock_client
+
+            await delete_langgraph_thread(session_id)
+
+            mock_client.threads.delete.assert_called_once_with(str(session_id))
+
+    @pytest.mark.asyncio
+    async def test_swallows_delete_failure(self):
+        session_id = uuid4()
+
+        with patch("app.services.session_service.get_langgraph_client") as mock_client_getter:
+            mock_client = MagicMock()
+            mock_client.threads.delete = AsyncMock(side_effect=RuntimeError("thread gone"))
+            mock_client_getter.return_value = mock_client
+
+            await delete_langgraph_thread(session_id)  # should not raise
