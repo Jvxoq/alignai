@@ -122,11 +122,6 @@ body {
   to { transform: rotate(360deg); }
 }
 
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 .status-indicator {
   display: flex;
   align-items: center;
@@ -134,7 +129,6 @@ body {
   margin-bottom: var(--space-md);
   color: var(--color-text);
   font-size: 0.9rem;
-  animation: fade-in 0.2s ease-out;
 }
 
 .status-dot {
@@ -207,6 +201,15 @@ body {
 .report-document p {
   margin-bottom: var(--space-sm);
   color: var(--color-text);
+}
+
+.report-document-markdown {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .error-display {
@@ -496,52 +499,19 @@ body {
   overflow-y: auto;
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
 .loading-screen {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-md);
   min-height: 100vh;
   font-size: 1.2rem;
   color: var(--color-text);
-  animation: fade-in 0.2s ease-out;
 }
 
-.spinner {
-  animation: spin 0.8s linear infinite;
-}
-
-.session-skeleton {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  animation: fade-in 0.2s ease-out;
-}
-
-.session-skeleton-item {
-  height: 2.25rem;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(
-    100deg,
-    var(--color-surface) 30%,
-    var(--color-border) 50%,
-    var(--color-surface) 70%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+.loading {
+  text-align: center;
+  padding: var(--space-lg);
+  color: var(--color-text);
 }
 
 .no-sessions {
@@ -578,7 +548,6 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  animation: overlay-fade-in 0.15s ease-out;
 }
 
 .modal {
@@ -588,17 +557,6 @@ body {
   padding: var(--space-xl);
   max-width: 500px;
   width: 90%;
-  animation: modal-pop-in 0.18s ease-out;
-}
-
-@keyframes overlay-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes modal-pop-in {
-  from { opacity: 0; transform: scale(0.96) translateY(4px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .modal-small {
@@ -700,17 +658,6 @@ body {
   overflow: hidden;
 }
 
-.session-limit-message {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xl);
-  text-align: center;
-  font-size: 1.125rem;
-  color: var(--text-secondary, #666);
-}
-
 .chat-messages {
   flex: 1;
   overflow-y: auto;
@@ -719,29 +666,12 @@ body {
   flex-direction: column;
   gap: var(--space-md);
   scroll-behavior: smooth;
-  scrollbar-width: thin;
-  scrollbar-color: #000000 var(--color-bg);
-}
-
-.chat-messages::-webkit-scrollbar {
-  width: 8px;
-}
-
-.chat-messages::-webkit-scrollbar-track {
-  background: var(--color-bg);
-}
-
-.chat-messages::-webkit-scrollbar-thumb {
-  background: #000000;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
 }
 
 .chat-message {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  animation: fade-in 0.25s ease-out;
 }
 
 .chat-message--user {
@@ -765,42 +695,6 @@ body {
   border-color: var(--color-text);
 }
 
-.chat-skeleton {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  animation: fade-in 0.2s ease-out;
-}
-
-.chat-skeleton-bubble {
-  height: 3rem;
-  max-width: 60%;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
-  background: linear-gradient(
-    100deg,
-    #1f1e1b 30%,
-    #252320 50%,
-    #1f1e1b 70%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-shimmer 1.6s ease-in-out infinite;
-}
-
-.chat-skeleton-bubble--user {
-  align-self: flex-end;
-}
-
-.chat-skeleton-bubble--assistant {
-  align-self: flex-start;
-  width: 70%;
-}
-
-@keyframes skeleton-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
 .user-message {
   color: var(--color-text);
   white-space: pre-wrap;
@@ -810,6 +704,7 @@ body {
 .chat-input-container {
   flex-shrink: 0;
   padding: var(--space-md) var(--space-xl);
+  border-top: 1px solid var(--color-border);
 }
 
 .input-section--compact {

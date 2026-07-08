@@ -1,15 +1,13 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 
-function ReportDocumentInner({ content, done }) {
+function ReportDocumentInner({ content }) {
   if (!content) return null;
   return (
     <article className="report-document">
-      {done ? (
+      <div className="report-document-markdown">
         <ReactMarkdown>{content}</ReactMarkdown>
-      ) : (
-        <pre className="report-document-raw">{content}</pre>
-      )}
+      </div>
     </article>
   );
 }
