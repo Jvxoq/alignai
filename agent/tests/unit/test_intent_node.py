@@ -1,6 +1,7 @@
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
+import pytest
 from langchain_core.messages import AIMessage, HumanMessage
 
 from app.core.utils import last_user_message
@@ -135,3 +136,102 @@ class TestIntentNode:
         result = await intent_node(state)
         assert result["objective"] is None
         assert len(result["messages"]) == 1
+
+    @patch("app.nodes.intent_node.call_llm_structured", new_callable=AsyncMock)
+    async def test_empty_llm_response_falls_back_to_keywords(self, mock_llm):
+        mock_llm.return_value = IntentClassification(objective=None, response=None)
+        state = {
+            "messages": [HumanMessage(content="AI Act compliance question")],
+            "retrieved_docs": [],
+            "is_relevant": None,
+            "retrieval_attempts": 0,
+        }
+        result = await intent_node(state)
+        assert result["objective"] is not None
+        assert "Retrieve EU AI Act provisions" in result["objective"]
+
+    @pytest.mark.parametrize("exc", [TimeoutError("timed out"), ConnectionError("network down")])
+    @patch("app.nodes.intent_node.call_llm_structured", new_callable=AsyncMock)
+    async def test_network_failure_compliance_query_falls_back_to_keywords(self, mock_llm, exc):
+        mock_llm.side_effect = exc
+        state = {
+            "messages": [HumanMessage(content="What is AI Act compliance?")],
+            "retrieved_docs": [],
+            "is_relevant": None,
+            "retrieval_attempts": 0,
+        }
+        result = await intent_node(state)
+        assert result["objective"] is not None
+        assert "Retrieve EU AI Act provisions" in result["objective"]
+        assert result["messages"] == []
+
+    @pytest.mark.parametrize("exc", [TimeoutError("timed out"), ConnectionError("network down")])
+    @patch("app.nodes.intent_node.call_llm_structured", new_callable=AsyncMock)
+    async def test_network_failure_general_chat_returns_error_message(self, mock_llm, exc):
+        mock_llm.side_effect = exc
+        state = {
+            "messages": [HumanMessage(content="Hello there")],
+            "retrieved_docs": [],
+            "is_relevant": None,
+            "retrieval_attempts": 0,
+        }
+        result = await intent_node(state)
+        assert result["objective"] is None
+        assert len(result["messages"]) == 1
+        assert "currently unable to process" in result["messages"][0].content
+
+    @patch("app.nodes.intent_node.call_llm_structured", new_callable=AsyncMock)
+    async def test_value_error_compliance_query_falls_back_to_keywords(self, mock_llm):
+        mock_llm.side_effect = ValueError("bad structured output")
+        state = {
+            "messages": [HumanMessage(content="high-risk AI system requirements")],
+            "retrieved_docs": [],
+            "is_relevant": None,
+            "retrieval_attempts": 0,
+        }
+        result = await intent_node(state)
+        assert result["objective"] is not None
+        assert "Retrieve EU AI Act provisions" in result["objective"]
+        assert result["messages"] == []
+
+    @patch("app.nodes.intent_node.call_llm_structured", new_callable=AsyncMock)
+    async def test_value_error_general_chat_returns_fallback_message(self, mock_llm):
+        mock_llm.side_effect = ValueError("bad structured output")
+        state = {
+            "messages": [HumanMessage(content="What's the weather like?")],
+            "retrieved_docs": [],
+            "is_relevant": None,
+            "retrieval_attempts": 0,
+        }
+        result = await intent_node(state)
+        assert result["objective"] is None
+        assert len(result["messages"]) == 1
+        assert "compliance auditor" in result["messages"][0].content
+
+    @patch("app.nodes.intent_node.call_llm_structured", new_callable=AsyncMock)
+    async def test_unexpected_error_compliance_query_falls_back_to_keywords(self, mock_llm):
+        mock_llm.side_effect = KeyError("unexpected")
+        state = {
+            "messages": [HumanMessage(content="deployment obligations under the AI Act")],
+            "retrieved_docs": [],
+            "is_relevant": None,
+            "retrieval_attempts": 0,
+        }
+        result = await intent_node(state)
+        assert result["objective"] is not None
+        assert "Retrieve EU AI Act provisions" in result["objective"]
+        assert result["messages"] == []
+
+    @patch("app.nodes.intent_node.call_llm_structured", new_callable=AsyncMock)
+    async def test_unexpected_error_general_chat_returns_fallback_message(self, mock_llm):
+        mock_llm.side_effect = KeyError("unexpected")
+        state = {
+            "messages": [HumanMessage(content="tell me a joke")],
+            "retrieved_docs": [],
+            "is_relevant": None,
+            "retrieval_attempts": 0,
+        }
+        result = await intent_node(state)
+        assert result["objective"] is None
+        assert len(result["messages"]) == 1
+        assert "compliance auditor" in result["messages"][0].content

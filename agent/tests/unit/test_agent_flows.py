@@ -4,7 +4,7 @@ from langchain_core.messages import AIMessage, HumanMessage
 
 from app.graph.edges import check_relevance, should_retrieve
 from app.graph.graph import END, graph
-from app.graph.state import RESET_DOCS
+from app.models.rewrite import RewrittenObjective
 from app.nodes.retriever_node import retriever_node
 
 
@@ -462,12 +462,12 @@ async def test_retriever_zero_results(mock_get_client, mock_embed):
 # Edge: rewrite_objective_node refines objective
 # ------------------------------------------------------------------
 
-@patch("app.nodes.rewrite_objective_node.call_llm", new_callable=AsyncMock)
+@patch("app.nodes.rewrite_objective_node.call_llm_structured", new_callable=AsyncMock)
 async def test_rewrite_increments_attempt(mock_llm_rewrite):
     """When retriever fails relevance, rewrite_objective_node should
     return a refined objective and reset is_relevant for re-evaluation."""
-    mock_llm_rewrite.return_value = (
-        "EU AI Act Article 9 risk management system for high-risk AI"
+    mock_llm_rewrite.return_value = RewrittenObjective(
+        objective="EU AI Act Article 9 risk management system for high-risk AI"
     )
 
     from app.nodes.rewrite_objective_node import rewrite_objective_node

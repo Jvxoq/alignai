@@ -29,11 +29,14 @@ def test_loads_from_env(monkeypatch):
 def test_defaults(monkeypatch):
     for key, value in REQUIRED_ENV.items():
         monkeypatch.setenv(key, value)
+    # Clear any inherited value so we assert the code default, not the process env
+    # (e.g. containers set LANGCHAIN_TRACING_V2=false).
+    monkeypatch.delenv("LANGCHAIN_TRACING_V2", raising=False)
 
     settings = Settings(_env_file=None)
 
     assert settings.LLM_MODEL == "llama-3.3-70b-versatile"
-    assert settings.INTENT_LLM_MODEL == "llama-3.3-70b-versatile"
+    assert settings.INTENT_LLM_MODEL == "openai/gpt-oss-120b"
     assert settings.GENERATOR_LLM_MODEL == "llama-3.3-70b-versatile"
     assert settings.LLM_TEMPERATURE == 0.1
     assert settings.LLM_MAX_RETRIES == 3

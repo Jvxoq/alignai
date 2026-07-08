@@ -2,6 +2,7 @@ from unittest.mock import AsyncMock, patch
 
 from langchain_core.messages import HumanMessage
 
+from app.models.rewrite import RewrittenObjective
 from app.nodes.rewrite_objective_node import (
     _build_refined_objective,
     rewrite_objective_node,
@@ -21,9 +22,9 @@ class TestBuildRefinedObjective:
 
 
 class TestRewriteObjectiveNode:
-    @patch("app.nodes.rewrite_objective_node.call_llm", new_callable=AsyncMock)
+    @patch("app.nodes.rewrite_objective_node.call_llm_structured", new_callable=AsyncMock)
     async def test_rewrites_objective(self, mock_llm):
-        mock_llm.return_value = "Rewritten objective for high-risk systems"
+        mock_llm.return_value = RewrittenObjective(objective="Rewritten objective for high-risk systems")
         state = {
             "objective": "original objective",
             "messages": [HumanMessage(content="user query")],
@@ -34,7 +35,7 @@ class TestRewriteObjectiveNode:
         assert result["objective"] == "Rewritten objective for high-risk systems"
         assert result["is_relevant"] is None
 
-    @patch("app.nodes.rewrite_objective_node.call_llm", new_callable=AsyncMock)
+    @patch("app.nodes.rewrite_objective_node.call_llm_structured", new_callable=AsyncMock)
     async def test_llm_failure_falls_back(self, mock_llm):
         mock_llm.side_effect = RuntimeError("LLM unavailable")
         state = {
@@ -47,9 +48,9 @@ class TestRewriteObjectiveNode:
         assert "original" in result["objective"]
         assert result["is_relevant"] is None
 
-    @patch("app.nodes.rewrite_objective_node.call_llm", new_callable=AsyncMock)
+    @patch("app.nodes.rewrite_objective_node.call_llm_structured", new_callable=AsyncMock)
     async def test_empty_llm_response_falls_back(self, mock_llm):
-        mock_llm.return_value = ""
+        mock_llm.return_value = RewrittenObjective(objective="")
         state = {
             "objective": "original",
             "messages": [HumanMessage(content="query")],
