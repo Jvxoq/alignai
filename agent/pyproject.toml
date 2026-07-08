@@ -22,17 +22,12 @@ dependencies = [
 dev = [
     "pytest>=8.3.0",
     "pytest-asyncio>=0.24.0",
-    # CLI used to run `langgraph dev` locally and generate the prod Dockerfile.
-    # Not a runtime dependency — production is served by the langchain/langgraph-api image.
+    # Local-only: `langgraph dev` for hot-reload iteration and `langgraph
+    # dockerfile`/`build` to regenerate the production Dockerfile. The
+    # deployed image (agent/Dockerfile, FROM langchain/langgraph-api) ships
+    # its own production server — this package is never installed there.
     "langgraph-cli[inmem]>=0.4.30",
 ]
-
-[tool.mypy]
-plugins = ["pydantic.mypy"]
-
-[[tool.mypy.overrides]]
-module = ["pymupdf4llm.*"]
-ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
