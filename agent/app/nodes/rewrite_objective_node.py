@@ -2,7 +2,8 @@ import logging
 
 from app.core.utils import last_user_message
 from app.graph.state import AgentState
-from app.infrastructure.llm_client import call_llm
+from app.infrastructure.llm_client import call_llm_structured
+from app.models.rewrite import RewrittenObjective
 from app.prompts.rewrite_prompt import REWRITE_PROMPT
 
 logger = logging.getLogger(__name__)
@@ -24,8 +25,8 @@ async def rewrite_objective_node(state: AgentState) -> dict:
 
     try:
         prompt = REWRITE_PROMPT.format(objective=objective, user_query=user_query)
-        raw = await call_llm(prompt)
-        refined = raw.strip().strip('"').strip("'")
+        result = await call_llm_structured(prompt, RewrittenObjective)
+        refined = result.objective.strip().strip('"').strip("'")
         if refined:
             logger.info("Objective rewritten via LLM: '%s' -> '%s'", objective, refined)
             return {
@@ -38,6 +39,7 @@ async def rewrite_objective_node(state: AgentState) -> dict:
     except Exception:
         logger.exception("LLM rewrite failed, falling back to string append")
         refined = _build_refined_objective(objective, user_query)
+        logger.info("Objective rewritten via fallback: '%s' -> '%s'", objective, refined)
         return {
             "objective": refined,
             "is_relevant": None,

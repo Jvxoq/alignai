@@ -77,7 +77,7 @@ async def intent_node(state: AgentState) -> dict:
         )
 
         if result.objective:
-            logger.info("Intent classified: compliance-related (LLM)")
+            logger.info("Intent classified: compliance-related (LLM), objective: %s", result.objective)
             return {**base_updates, "objective": result.objective, "messages": []}
 
         if result.response:
@@ -94,9 +94,11 @@ async def intent_node(state: AgentState) -> dict:
     except (TimeoutError, ConnectionError) as e:
         logger.error("LLM classification failed due to network issue: %s, falling back to keywords", type(e).__name__)
         if _is_compliance_related(user_query):
+            objective = _build_objective(user_query)
+            logger.info("Intent classified: compliance-related (keywords), objective: %s", objective)
             return {
                 **base_updates,
-                "objective": _build_objective(user_query),
+                "objective": objective,
                 "messages": [],
             }
         return {
@@ -107,9 +109,11 @@ async def intent_node(state: AgentState) -> dict:
     except ValueError as e:
         logger.warning("LLM returned invalid response: %s, falling back to keywords", str(e))
         if _is_compliance_related(user_query):
+            objective = _build_objective(user_query)
+            logger.info("Intent classified: compliance-related (keywords), objective: %s", objective)
             return {
                 **base_updates,
-                "objective": _build_objective(user_query),
+                "objective": objective,
                 "messages": [],
             }
         return {
@@ -120,9 +124,11 @@ async def intent_node(state: AgentState) -> dict:
     except Exception as e:
         logger.exception("Unexpected error in intent classification: %s", type(e).__name__)
         if _is_compliance_related(user_query):
+            objective = _build_objective(user_query)
+            logger.info("Intent classified: compliance-related (keywords), objective: %s", objective)
             return {
                 **base_updates,
-                "objective": _build_objective(user_query),
+                "objective": objective,
                 "messages": [],
             }
         return {

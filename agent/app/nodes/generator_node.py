@@ -11,18 +11,12 @@ from app.prompts.generator_prompt import GENERATOR_PROMPT
 logger = logging.getLogger(__name__)
 
 _FALLBACK_REPORT = (
-    "# Compliance Audit Report\n\n"
-    "## 1. Compliance Objective\n"
-    "Insufficient information to determine.\n\n"
-    "## 2. Relevant EU AI Act Articles\n"
-    "- Insufficient information to determine.\n\n"
-    "## 3. Assessment\n"
+    "# Compliance Audit Report\n"
+    "**Objective:** Insufficient information to determine.\n\n"
+    "## Verdict\n"
     "**Verdict:** Requires Further Review\n\n"
-    "## 4. Findings\n"
-    "- Insufficient information to determine.\n\n"
-    "## 5. Recommendations\n"
-    "- Review each cited article against the specific feature implementation.\n"
-    "- Document compliance evidence for each requirement.\n"
+    "## Sources & Citations\n"
+    "- Insufficient information to determine.\n"
 )
 
 
@@ -34,6 +28,7 @@ def _format_context(docs: list[dict]) -> str:
         article = doc.get("article_number", "Unknown Article")
         title = doc.get("article_title", "")
         chapter = doc.get("chapter_number", "")
+        section = doc.get("section_number", "")
         recital = doc.get("recital_number")
         is_recital = doc.get("is_recital", False)
         parent_text = doc.get("parent_text", "")
@@ -48,6 +43,8 @@ def _format_context(docs: list[dict]) -> str:
             header_parts.append(label)
         if chapter:
             header_parts.append(f"Chapter {chapter}")
+        if section:
+            header_parts.append(f"Section {section}")
 
         header = " — ".join(header_parts) if header_parts else "Unknown"
         blocks.append(f"[{header}]\n{parent_text or 'No text available.'}")

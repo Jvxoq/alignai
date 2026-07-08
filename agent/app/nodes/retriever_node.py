@@ -33,6 +33,7 @@ def format_retrieved_docs(hits: list[dict]) -> list[dict]:
             "article_number": payload.get("article_number"),
             "article_title": payload.get("article_title"),
             "chapter_number": payload.get("chapter_number"),
+            "section_number": payload.get("section_number"),
             "recital_number": payload.get("recital_number"),
             "is_recital": payload.get("is_recital", False),
             "parent_text": payload.get("parent_text"),
