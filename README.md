@@ -2,9 +2,12 @@
 
 > AI-powered EU AI Act compliance auditing platform — developers describe a feature and receive a structured alignment report grounded in regulatory documents.
 
-![Backend CI](https://github.com/jvxoq/alignai/actions/workflows/backend.yml/badge.svg)
-![Agent CI](https://github.com/jvxoq/alignai/actions/workflows/agent.yml/badge.svg)
-![Frontend CI](https://github.com/jvxoq/alignai/actions/workflows/frontend.yml/badge.svg)
+![Backend CI](https://github.com/Jvxoq/alignai/actions/workflows/backend.yml/badge.svg)
+![Agent CI](https://github.com/Jvxoq/alignai/actions/workflows/agent.yml/badge.svg)
+![Frontend CI](https://github.com/Jvxoq/alignai/actions/workflows/frontend.yml/badge.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+
+**What this project demonstrates:** async **FastAPI** with a layered (router → service → repository) architecture, a **LangGraph** RAG agent (intent classification → semantic retrieval → report generation), **JWT auth** with refresh-token rotation, **Server-Sent Events** streaming to the browser, and **per-service CI** across three independently deployable apps (backend, agent, frontend).
 
 ---
 
@@ -24,6 +27,7 @@
 12. [Deployment](#deployment)
 13. [Contributing](#contributing)
 14. [Troubleshooting](#troubleshooting)
+15. [License](#license)
 
 ---
 
@@ -198,7 +202,7 @@ alignai/                          # Repo root
 
 ```bash
 # 1. Clone the repo
-git clone <repo-url>
+git clone https://github.com/Jvxoq/alignai.git
 cd alignai
 
 # 2. Create the root .env file used by docker-compose variable substitution
@@ -560,3 +564,9 @@ Open a PR against `main`. CI must be green before merging. All three service pip
 | `uv sync` fails — Python version mismatch | System Python is older than 3.12 | Install Python 3.12 via uv: `uv python install 3.12` |
 | `npm install` fails on Node < 20 | Vite 6 requires Node 20+ | Upgrade Node: `nvm install 20 && nvm use 20` |
 | Qdrant search returns no results | Collection not ingested or wrong collection name | Run `python ingest.py` and verify `QDRANT_COLLECTION_NAME` matches |
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE).

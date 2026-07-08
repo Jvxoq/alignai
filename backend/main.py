@@ -41,7 +41,7 @@ app = FastAPI(
     version="0.1.0",
     contact={
         "name": "AlignAI Project",
-        "url": "https://github.com/yourusername/alignai",
+        "url": "https://github.com/Jvxoq/alignai",
     },
     license_info={
         "name": "MIT",
