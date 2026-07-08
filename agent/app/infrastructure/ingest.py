@@ -97,6 +97,10 @@ def _parse_markdown(markdown: str) -> list[Chunk]:
     current_article_body_lines: list[str] = []
     all_chunks: list[Chunk] = []
 
+    in_recitals = True
+    current_recital_number: int | None = None
+    current_recital_lines: list[str] = []
+
     def flush_article() -> None:
         nonlocal current_article_body_lines
         if not current_article_number or not current_article_body_lines:
@@ -134,10 +138,6 @@ def _parse_markdown(markdown: str) -> list[Chunk]:
                 recital_number=current_recital_number,
             ))
         current_recital_lines = []
-
-    in_recitals = True
-    current_recital_number: int | None = None
-    current_recital_lines: list[str] = []
 
     for line in lines:
         stripped = line.strip()
