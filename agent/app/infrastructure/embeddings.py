@@ -59,7 +59,7 @@ async def embed_text(
         )
         if not result.embeddings:
             raise RuntimeError("Embedding provider returned no embeddings")
-        return list(result.embeddings[0].values)
+        return list(result.embeddings[0].values or [])
 
     for attempt in range(max_retries):
         try:
@@ -103,7 +103,7 @@ async def embed_batch(texts: list[str], task_type: str = "RETRIEVAL_DOCUMENT") -
                 f"{len(result.embeddings or [])}, expected {len(texts)}"
             )
         return [
-            _validate_vector(list(e.values), settings.EMBEDDING_DIMENSIONS)
+            _validate_vector(list(e.values or []), settings.EMBEDDING_DIMENSIONS)
             for e in result.embeddings
         ]
 

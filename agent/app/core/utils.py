@@ -8,7 +8,7 @@ def last_user_message(messages: list) -> str:
     """
     for msg in reversed(messages):
         if isinstance(msg, HumanMessage):
-            return msg.content
+            return str(msg.content)
         if isinstance(msg, dict) and msg.get("role") == "user":
-            return msg.get("content", "")
+            return str(msg.get("content", ""))
     return ""
