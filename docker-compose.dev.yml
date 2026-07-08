@@ -1,0 +1,52 @@
+# DEV OVERRIDE — hot-reload local development
+#
+# Layers on top of docker-compose.yml (which is the prod-parity stack: nginx
+# static frontend, uvicorn without --reload). This file swaps in bind mounts
+# and reload-capable commands so source edits show up without a rebuild.
+#
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+# (or just `make dev-up`)
+
+services:
+  backend:
+    container_name: alignai-backend-dev
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/main.py:/app/main.py
+      - ./backend/alembic.ini:/app/alembic.ini
+      - ./backend/migrations:/app/migrations
+    command: sh -c ".venv/bin/alembic upgrade head && .venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    environment:
+      DEBUG: "true"
+
+  agent:
+    container_name: alignai-agent-dev
+    # This runs the same official langgraph-api image as prod (see
+    # agent/Dockerfile) — no `langgraph dev` file-watcher inside Docker, so
+    # edits under these mounts need `docker compose restart agent` (or
+    # `make dev-restart`) to take effect; the editable install picks up the
+    # new files on the next process start. For true hot-reload iteration on
+    # the graph itself, run `cd agent && uv run langgraph dev` on the host
+    # instead (see README "Adding a new agent node").
+    volumes:
+      - ./agent/app:/deps/agent/app
+      - ./agent/langgraph.json:/deps/agent/langgraph.json
+      - ./agent/ingest.py:/deps/agent/ingest.py
+      - ./agent/retrieve.py:/deps/agent/retrieve.py
+
+  # Vite dev server (HMR) instead of the Nginx static build. Stops the
+  # frontend image build at the "builder" stage, which still has Node.
+  frontend:
+    build:
+      target: builder
+    container_name: alignai-frontend-dev
+    command: sh -c "npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    healthcheck:
+      disable: true

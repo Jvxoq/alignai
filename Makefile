@@ -1,59 +1,71 @@
-# AlignAI — local Docker workflows.
-#
-#   make dev    → development stack (hot-reload, dev deps)   http://localhost
-#   make prod   → production-parity stack (lean images)      http://localhost
-#   make test   → run all test suites inside the dev containers
-#   make down   → stop and remove containers
-#
-# `dev` uses docker-compose.yml + docker-compose.override.yml (auto-merged).
-# `prod` uses ONLY docker-compose.yml, so the override is never applied.
+.DEFAULT_GOAL := help
 
-# Explicitly naming the base file makes `prod` skip the auto-loaded dev override.
-PROD := docker compose -f docker-compose.yml
+COMPOSE_PROD := docker compose -f docker-compose.yml
+COMPOSE_DEV  := docker compose -f docker-compose.yml -f docker-compose.dev.yml
 
-.PHONY: dev dev-d prod prod-d down clean logs ps \
-        test test-backend test-agent test-frontend
+.PHONY: help \
+        dev-build dev-up dev-up-d dev-down dev-logs dev-restart \
+        prod-build prod-up prod-up-d prod-down prod-logs prod-restart \
+        down clean
 
-## Development (default) — foreground, with build
-dev:
-	docker compose up --build
+help:
+	@echo "Dev (hot-reload, Vite dev server):"
+	@echo "  make dev-build     build the dev images"
+	@echo "  make dev-up        build + start dev stack (foreground)"
+	@echo "  make dev-up-d      build + start dev stack (detached)"
+	@echo "  make dev-down      stop the dev stack"
+	@echo "  make dev-logs      follow dev stack logs"
+	@echo "  make dev-restart   dev-down + dev-up-d"
+	@echo ""
+	@echo "Prod-parity (Nginx build, no reload):"
+	@echo "  make prod-build    build the prod-parity images"
+	@echo "  make prod-up       build + start prod-parity stack (foreground)"
+	@echo "  make prod-up-d     build + start prod-parity stack (detached)"
+	@echo "  make prod-down     stop the prod-parity stack"
+	@echo "  make prod-logs     follow prod-parity stack logs"
+	@echo "  make prod-restart  prod-down + prod-up-d"
+	@echo ""
+	@echo "  make down          stop both stacks"
+	@echo "  make clean         stop both stacks and remove volumes (deletes local Postgres data)"
 
-## Development, detached
-dev-d:
-	docker compose up --build -d
+dev-build:
+	$(COMPOSE_DEV) build
 
-## Production parity — foreground, with build
-prod:
-	$(PROD) up --build
+dev-up:
+	$(COMPOSE_DEV) up --build
 
-## Production parity, detached
-prod-d:
-	$(PROD) up --build -d
+dev-up-d:
+	$(COMPOSE_DEV) up --build -d
 
-## Stop and remove containers (keeps volumes)
+dev-down:
+	$(COMPOSE_DEV) down
+
+dev-logs:
+	$(COMPOSE_DEV) logs -f
+
+dev-restart: dev-down dev-up-d
+
+prod-build:
+	$(COMPOSE_PROD) build
+
+prod-up:
+	$(COMPOSE_PROD) up --build
+
+prod-up-d:
+	$(COMPOSE_PROD) up --build -d
+
+prod-down:
+	$(COMPOSE_PROD) down
+
+prod-logs:
+	$(COMPOSE_PROD) logs -f
+
+prod-restart: prod-down prod-up-d
+
 down:
-	docker compose down
+	-$(COMPOSE_DEV) down
+	-$(COMPOSE_PROD) down
 
-## Stop and remove containers AND named volumes (wipes the local DB)
 clean:
-	docker compose down -v
-
-## Tail logs of the running stack
-logs:
-	docker compose logs -f
-
-## Show container status
-ps:
-	docker compose ps
-
-## Run every test suite inside the running dev containers (start `make dev-d` first)
-test: test-backend test-agent test-frontend
-
-test-backend:
-	docker compose exec backend .venv/bin/pytest -q
-
-test-agent:
-	docker compose exec agent .venv/bin/pytest -q
-
-test-frontend:
-	docker compose exec frontend npm test -- --run
+	-$(COMPOSE_DEV) down -v
+	-$(COMPOSE_PROD) down -v
