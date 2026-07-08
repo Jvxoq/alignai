@@ -15,11 +15,19 @@
 ##        alignai-agent:
 ##          POSTGRES_URI  →  copy the Internal Database URL from the alignai-db
 ##                           page (leave the scheme as "postgresql://")
-##          LANGSMITH_API_KEY → free key from smith.langchain.com (Settings →
-##                           API Keys); the LangGraph server won't boot without it
+##          REDIS_URI     →  internal connection string for a Render Key Value
+##                           (Redis-compatible) instance — create one manually
+##                           first (Render dashboard → New → Key Value), the
+##                           official LangGraph server image requires it for
+##                           its task queue/pub-sub and won't boot without it.
+##                           If this repo's alignai-redis blueprint reference
+##                           doesn't resolve (service created outside this
+##                           blueprint), paste the internal URL here directly.
+##          LANGSMITH_API_KEY → free key from smith.langchain.com. Required —
+##                           the self-hosted image does a license check on
+##                           boot and will not start without it, even with
+##                           tracing (LANGCHAIN_TRACING_V2) turned off.
 ##          QDRANT_URL, QDRANT_API_KEY, GROQ_API_KEY, GEMINI_API_KEY
-##      REDIS_URI is injected automatically from the alignai-redis Key Value
-##      service, so you don't set it by hand.
 ##   4. After first deploy, pin SECRET_KEY: copy the generated value from the
 ##      backend service env vars and paste it back as a fixed value so deploys
 ##      don't rotate it and log users out.
@@ -92,21 +100,17 @@ services:
     plan: free
     healthCheckPath: /ok
     envVars:
-      # The langchain/langgraph-api image reads POSTGRES_URI (plain postgresql://
-      # scheme) for its durable checkpoint/thread store. Copy the Internal DB URL
-      # from alignai-db (no scheme change needed).
+      # Plain postgresql:// scheme — used by LangGraph's psycopg checkpoint store.
+      # Copy the Internal DB URL from alignai-db (no scheme change needed).
+      # Note the key is POSTGRES_URI (not POSTGRES_URL) — that's the exact
+      # name the official langgraph-api image reads.
       - key: POSTGRES_URI
         sync: false
-      # Redis/Valkey backs the server's run queue + streaming pub/sub. Injected
-      # automatically from the alignai-redis Key Value service — no secret to paste.
+      # Required by the official langgraph-api image for its task queue and
+      # run-stream pub/sub — see the blueprint header above for setup.
       - key: REDIS_URI
-        fromService:
-          name: alignai-redis
-          type: keyvalue
-          property: connectionString
-      # Required license check for the self-hosted LangGraph server (Self-Hosted
-      # Lite — free up to 1M nodes/yr). The container will NOT boot without it.
-      # Create a free key at smith.langchain.com → Settings → API Keys.
+        sync: false
+      # Required for the self-hosted license check on boot — see header above.
       - key: LANGSMITH_API_KEY
         sync: false
       - key: QDRANT_URL

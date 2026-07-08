@@ -7,10 +7,6 @@
 __pycache__/
 *.pyc
 *.pyo
-.pytest_cache/
-
-# Local langgraph dev-server state (in-memory checkpoints, cache)
-.langgraph_api/
 
 # Tests, VCS, docs, OS cruft
 tests/
@@ -18,3 +14,7 @@ tests/
 .gitignore
 *.md
 .DS_Store
+
+# LangGraph local dev/test artifacts — never needed in the built image
+.langgraph_api/
+.pytest_cache/
