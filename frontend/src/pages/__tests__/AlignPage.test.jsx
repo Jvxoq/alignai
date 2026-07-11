@@ -242,5 +242,9 @@ describe("AlignPage — error handling", () => {
 
     expect(await screen.findByText("Server error mid-stream")).toBeInTheDocument();
     expect(screen.getAllByText("Server error mid-stream")).toHaveLength(1);
+
+    // Regression: the partial content already streamed before the error must
+    // still be visible, not discarded along with the failed attempt.
+    expect(screen.getByText(/Partial answer/)).toBeInTheDocument();
   });
 });

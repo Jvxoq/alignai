@@ -22,6 +22,42 @@ export function useStream() {
     const decoder = new TextDecoder();
     let buffer = "";
 
+    const processLine = (line) => {
+      if (!line.startsWith("data: ")) return;
+      const data = line.slice(6);
+      if (!data) return;
+
+      try {
+        const event = JSON.parse(data);
+        onEvent?.(event);
+
+        switch (event.type) {
+          case "start":
+            setResponseType(event.response_type);
+            break;
+          case "status":
+            setStatusMessage(event.message);
+            break;
+          case "token":
+            setTokens((prev) => prev + event.data);
+            break;
+          case "done":
+            setStatus("complete");
+            break;
+          case "error":
+            setError(event.message);
+            setStatus("error");
+            break;
+        }
+      } catch (err) {
+        // The backend only ever sends well-formed JSON payloads; a parse
+        // failure here means a truncated chunk or a proxy/dev-server
+        // mangling the stream. Surfacing it (without breaking the stream)
+        // makes that visible instead of silently dropping tokens.
+        console.warn("Skipping malformed SSE line:", line, err);
+      }
+    };
+
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -30,46 +66,21 @@ export function useStream() {
       const lines = buffer.split("\n");
       buffer = lines.pop() || "";
 
-      for (const line of lines) {
-        if (!line.startsWith("data: ")) continue;
-        const data = line.slice(6);
-        if (!data) continue;
-
-        try {
-          const event = JSON.parse(data);
-          onEvent?.(event);
-
-          switch (event.type) {
-            case "start":
-              setResponseType(event.response_type);
-              break;
-            case "status":
-              setStatusMessage(event.message);
-              break;
-            case "token":
-              setTokens((prev) => prev + event.data);
-              break;
-            case "done":
-              setStatus("complete");
-              break;
-            case "error":
-              setError(event.message);
-              setStatus("error");
-              break;
-          }
-        } catch (err) {
-          // The backend only ever sends well-formed JSON payloads; a parse
-          // failure here means a truncated chunk or a proxy/dev-server
-          // mangling the stream. Surfacing it (without breaking the stream)
-          // makes that visible instead of silently dropping tokens.
-          console.warn("Skipping malformed SSE line:", line, err);
-        }
-      }
+      for (const line of lines) processLine(line);
     }
+
+    // The connection can end right after a complete event with no trailing
+    // newline (e.g. a truncated stream) -- process whatever's left instead
+    // of silently dropping the final event.
+    if (buffer) processLine(buffer);
   }, []);
 
   const startStream = useCallback(
     async (fetchFn) => {
+      // Abort any stream still in flight so its late events can't land on
+      // top of this new one (e.g. switching sessions mid-stream, then
+      // starting a fresh audit before the old fetch has finished).
+      abortRef.current?.abort();
       reset();
       setStatus("connecting");
 

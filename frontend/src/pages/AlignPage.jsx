@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { ChatSkeleton } from "../components/ChatSkeleton";
 import AuditButton from "../components/InputSection/AuditButton";
 import CharacterCounter from "../components/InputSection/CharacterCounter";
 import FeatureTextarea from "../components/InputSection/FeatureTextarea";
@@ -11,11 +12,14 @@ import { useStream } from "../hooks/useStream";
 import { postAlign } from "../services/alignApi";
 
 const MAX_LENGTH = 2000;
+// Mirrors the backend's MAX_SESSIONS_PER_USER (app/core/config.py).
+const MAX_SESSIONS = 3;
 
 export default function AlignPage() {
   const [featureText, setFeatureText] = useState("");
   const [messages, setMessages] = useState([]);
-  const { sessionId, createSession, updateSessionTitle, fetchMessages } = useSession();
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const { sessionId, sessions, createSession, updateSessionTitle, fetchMessages } = useSession();
   const { status, responseType, statusMessage, tokens, error, startStream, abort, reset, setError, setStatus } = useStream();
   const messagesEndRef = useRef(null);
   const messagesRef = useRef(null);
@@ -24,7 +28,14 @@ export default function AlignPage() {
 
   const isLoading = status === "connecting" || status === "streaming";
   const canSubmit = featureText.trim().length > 0 && !isLoading;
-  const isCompact = messages.length > 0;
+  // An active session (even an empty one, e.g. just-selected from the sidebar)
+  // keeps the compact chat layout — only the "no session yet" state shows the
+  // full hero screen. Otherwise finishing history-load on an empty session
+  // would flip isCompact back to false and snap the layout back to the hero.
+  const isCompact = messages.length > 0 || historyLoading || sessionId !== null;
+  // No active session AND already at the cap → creating a new one would 409,
+  // so hide the chatbox and show the limit message in its place.
+  const limitReached = sessionId === null && sessions.length >= MAX_SESSIONS;
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -55,6 +66,12 @@ export default function AlignPage() {
     let currentSessionId = sessionId;
     if (!currentSessionId) {
       currentSessionId = await createSession();
+      if (currentSessionId === "LIMIT_REACHED") {
+        // Safety net: count was stale (e.g. another tab). limitReached is
+        // derived from `sessions`, which refreshes on the next fetch.
+        setMessages((prev) => prev.slice(0, -1));
+        return;
+      }
       if (!currentSessionId) {
         setMessages((prev) => prev.slice(0, -1));
         setError("Could not create a new session. Please try again.");
@@ -98,6 +115,9 @@ export default function AlignPage() {
     if (status === "error") {
       setMessages((prev) => {
         if (prev.length > 0 && prev[prev.length - 1].role === "user") {
+          // Restore the failed prompt into the input instead of losing it --
+          // the textarea was already cleared when the audit was submitted.
+          setFeatureText(prev[prev.length - 1].content);
           return prev.slice(0, -1);
         }
         return prev;
@@ -112,10 +132,17 @@ export default function AlignPage() {
     prevSessionRef.current = sessionId;
 
     if (sessionId === null || (prev !== null && prev !== sessionId)) {
+      // Abort any stream still running for the session we're leaving so its
+      // late tokens/done event can't land on the newly active session.
+      abort();
       setMessages([]);
       setFeatureText("");
       hasSetTitle.current = false;
       reset();
+    }
+
+    if (sessionId === null) {
+      setHistoryLoading(false);
     }
 
     if (sessionId !== null) {
@@ -124,6 +151,7 @@ export default function AlignPage() {
         return;
       }
       let cancelled = false;
+      setHistoryLoading(true);
       fetchMessages(sessionId).then((fetched) => {
         if (cancelled) return;
         const mapped = fetched.map((m) => ({
@@ -137,10 +165,11 @@ export default function AlignPage() {
         }));
         setMessages(mapped);
         if (mapped.length > 0) hasSetTitle.current = true;
+        setHistoryLoading(false);
       });
       return () => { cancelled = true; };
     }
-  }, [sessionId, reset, fetchMessages]);
+  }, [sessionId, reset, fetchMessages, abort]);
 
   useEffect(() => {
     scrollToBottom();
@@ -165,9 +194,16 @@ export default function AlignPage() {
         {!isCompact && <p>Feature alignment auditing powered by AI</p>}
       </header>
 
+      {limitReached ? (
+        <main className="chat-layout">
+          <div className="session-limit-message">
+            You have reached maximum sessions.
+          </div>
+        </main>
+      ) : (
       <main className="chat-layout">
         <div className="chat-messages" ref={messagesRef}>
-          {messages.map((msg) => (
+          {historyLoading ? <ChatSkeleton /> : messages.map((msg) => (
             <div key={msg.id} className={`chat-message chat-message--${msg.role}`}>
               <div className="chat-message-content">
                 {msg.role === "user" ? (
@@ -185,6 +221,16 @@ export default function AlignPage() {
           {status === "streaming" && (
             <div className="chat-message chat-message--assistant">
               <StatusIndicator status={status} message={statusMessage} error={error} />
+              {responseType === "report" && <ReportDocument content={tokens} />}
+              {responseType && responseType !== "report" && <PlainTextDisplay text={tokens} />}
+            </div>
+          )}
+
+          {/* A stream that errors out after producing partial content should
+              still show that content -- the error itself is reported once,
+              below, via ErrorDisplay. */}
+          {status === "error" && tokens && (
+            <div className="chat-message chat-message--assistant">
               {responseType === "report" && <ReportDocument content={tokens} />}
               {responseType && responseType !== "report" && <PlainTextDisplay text={tokens} />}
             </div>
@@ -220,6 +266,7 @@ export default function AlignPage() {
           </section>
         </div>
       </main>
+      )}
     </div>
   );
 }
