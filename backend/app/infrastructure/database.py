@@ -1,12 +1,13 @@
+from datetime import datetime
 from functools import lru_cache
 from typing import Any, cast
 from uuid import UUID, uuid4
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, func, select, text, update, delete
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, func, select, text, update, delete
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.engine import CursorResult
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from app.core.config import get_settings
 
@@ -18,22 +19,22 @@ class Base(DeclarativeBase):
 class UserRecord(Base):
     __tablename__ = "users"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
-    email = Column(String(255), unique=True, index=True, nullable=False)
-    hashed_password = Column(String(255), nullable=False)
-    is_active = Column(Boolean, default=True, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class SessionRecord(Base):
     __tablename__ = "sessions"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
-    user_id = Column(PGUUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
-    title = Column(String(200), nullable=True)
-    message_count = Column(Integer, nullable=False, default=0)
-    last_active_at = Column(DateTime(timezone=True), server_default=func.now())
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    user_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    title: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    message_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    last_active_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 @lru_cache
@@ -186,7 +187,7 @@ async def update_session_title(session_id: UUID, user_id: UUID, title: str) -> S
         record = result.scalar_one_or_none()
         if record is None:
             return None
-        record.title = title  # type: ignore[assignment]
+        record.title = title
         await db.commit()
         await db.refresh(record)
         return record
