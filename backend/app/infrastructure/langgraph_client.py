@@ -1,4 +1,5 @@
 import logging
+from functools import lru_cache
 
 from langgraph_sdk.client import get_client
 
@@ -7,6 +8,7 @@ from app.core.config import get_settings
 logger = logging.getLogger(__name__)
 
 
+@lru_cache
 def get_langgraph_client():
     settings = get_settings()
     return get_client(

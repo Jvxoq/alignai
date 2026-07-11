@@ -671,6 +671,27 @@ class TestStreamAlign:
             assert '"response_type":"report"' in start_events[0]
 
 
+class _FakeRunsStream:
+    """Stands in for the real async generator returned by client.runs.stream().
+    The real one doesn't open a connection until the first item is pulled, so
+    a connect failure surfaces from __anext__(), not from calling .stream()."""
+
+    def __init__(self, should_fail: bool):
+        self._should_fail = should_fail
+        self._yielded = False
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if self._should_fail:
+            raise httpx.ConnectError("agent is still waking up")
+        if self._yielded:
+            raise StopAsyncIteration
+        self._yielded = True
+        return "connected"
+
+
 class TestStreamFromLangGraphRetry:
     """Verifies the retry-with-backoff decorator itself: a cold-start agent
     that fails to connect a couple of times before waking up should recover
@@ -683,9 +704,7 @@ class TestStreamFromLangGraphRetry:
         def flaky_stream(**kwargs):
             nonlocal call_count
             call_count += 1
-            if call_count < 3:
-                raise httpx.ConnectError("agent is still waking up")
-            return "connected"
+            return _FakeRunsStream(should_fail=call_count < 3)
 
         mock_client = MagicMock()
         mock_client.runs.stream.side_effect = flaky_stream
@@ -693,14 +712,15 @@ class TestStreamFromLangGraphRetry:
         with patch("app.services.align_service.get_langgraph_client", return_value=mock_client), \
                 patch("asyncio.sleep", new=AsyncMock()):
             result = await _stream_from_langgraph("session-1", "hello")
+            items = [item async for item in result]
 
-        assert result == "connected"
+        assert items == ["connected"]
         assert call_count == 3
 
     @pytest.mark.asyncio
     async def test_gives_up_after_exhausting_retries(self):
         mock_client = MagicMock()
-        mock_client.runs.stream.side_effect = httpx.ConnectError("agent never woke up")
+        mock_client.runs.stream.side_effect = lambda **kwargs: _FakeRunsStream(should_fail=True)
 
         with patch("app.services.align_service.get_langgraph_client", return_value=mock_client), \
                 patch("asyncio.sleep", new=AsyncMock()):

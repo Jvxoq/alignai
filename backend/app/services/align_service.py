@@ -49,13 +49,32 @@ async def _stream_from_langgraph(
     thread_id: str, message: str
 ):
     client = get_langgraph_client()
-    return client.runs.stream(
+    stream = client.runs.stream(
         thread_id=thread_id,
         assistant_id="align_agent",
         input={"messages": [{"role": "user", "content": message}]},
         stream_mode=["events"],
         if_not_exists="create",
     )
+    # client.runs.stream(...) only builds an async generator -- it doesn't open
+    # the connection until the first item is pulled. Without priming it here,
+    # a cold-start connection failure would only surface once iteration starts
+    # back in stream_align(), outside this function's @retry.
+    try:
+        first_chunk = await stream.__anext__()
+    except StopAsyncIteration:
+        async def _empty():
+            return
+            yield  # pragma: no cover - unreachable, only makes this a generator
+
+        return _empty()
+
+    async def _primed_stream():
+        yield first_chunk
+        async for chunk in stream:
+            yield chunk
+
+    return _primed_stream()
 
 
 def _format_sse(event: SSEEvent) -> str:
