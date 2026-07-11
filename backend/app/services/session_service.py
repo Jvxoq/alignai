@@ -38,7 +38,6 @@ async def create_user_session(user_id: UUID) -> SessionRecord:
 
 
 async def list_user_sessions(user_id: UUID, limit: int = 50, offset: int = 0) -> tuple[list[SessionRecord], int]:
-    from app.infrastructure.database import count_sessions_for_user
     sessions = await get_sessions_for_user(user_id, limit, offset)
     total = await count_sessions_for_user(user_id)
     return sessions, total
