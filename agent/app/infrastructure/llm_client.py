@@ -1,7 +1,7 @@
 import logging
 from typing import TypeVar, cast
 
-from groq import InternalServerError, RateLimitError
+from groq import APIConnectionError, InternalServerError, RateLimitError
 from langchain_core.messages import HumanMessage
 from langchain_groq import ChatGroq
 from pydantic import BaseModel, SecretStr
@@ -13,7 +13,10 @@ logger = logging.getLogger(__name__)
 
 T = TypeVar("T", bound=BaseModel)
 
-_RETRYABLE = (RateLimitError, InternalServerError, ConnectionError, TimeoutError)
+# groq.APIConnectionError/APITimeoutError (real network failures talking to
+# Groq) don't inherit from the builtin ConnectionError/TimeoutError, so they
+# need to be listed explicitly or they silently skip the retry entirely.
+_RETRYABLE = (RateLimitError, InternalServerError, APIConnectionError, ConnectionError, TimeoutError)
 
 
 @retry(
