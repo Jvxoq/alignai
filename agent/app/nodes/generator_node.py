@@ -19,6 +19,19 @@ _FALLBACK_REPORT = (
     "- Insufficient information to determine.\n"
 )
 
+# Used instead of _FALLBACK_REPORT when retrieval actually found relevant
+# articles but the LLM call to write them up failed -- saying "insufficient
+# information" in that case would be false; the law was found, the write-up
+# wasn't.
+_GENERATION_ERROR_REPORT = (
+    "# Compliance Audit Report\n"
+    "**Objective:** Unable to generate a report due to a temporary error.\n\n"
+    "## Verdict\n"
+    "**Verdict:** Requires Further Review\n\n"
+    "## Sources & Citations\n"
+    "- Relevant EU AI Act content was found, but the report could not be generated. Please try again.\n"
+)
+
 
 def _format_context(docs: list[dict]) -> str:
     if not docs:
@@ -68,13 +81,13 @@ async def generator_node(state: AgentState) -> dict:
         logger.info("Compliance report generated via LLM for objective: %s", objective)
     except (TimeoutError, ConnectionError) as e:
         logger.error("LLM generation failed due to %s, using fallback report", type(e).__name__)
-        report = _FALLBACK_REPORT
+        report = _GENERATION_ERROR_REPORT if docs else _FALLBACK_REPORT
     except ValueError as e:
         logger.warning("LLM returned invalid report: %s, using fallback", str(e))
-        report = _FALLBACK_REPORT
+        report = _GENERATION_ERROR_REPORT if docs else _FALLBACK_REPORT
     except Exception as e:
         logger.exception("Unexpected error in report generation: %s", type(e).__name__)
-        report = _FALLBACK_REPORT
+        report = _GENERATION_ERROR_REPORT if docs else _FALLBACK_REPORT
 
     return {
         "retrieved_docs": RESET_DOCS,

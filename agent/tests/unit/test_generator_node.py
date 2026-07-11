@@ -203,6 +203,21 @@ class TestGeneratorNode:
         assert "Compliance Audit Report" in result["messages"][0].content
 
     @patch("app.nodes.generator_node.call_llm", new_callable=AsyncMock)
+    async def test_llm_failure_with_retrieved_docs_does_not_claim_insufficient_info(self, mock_llm):
+        mock_llm.side_effect = RuntimeError("LLM unavailable")
+        state = {
+            "objective": "test",
+            "retrieved_docs": [
+                {"article_number": "6", "parent_text": "Article 6 text.", "is_recital": False}
+            ],
+            "messages": [HumanMessage(content="test")],
+        }
+        result = await generator_node(state)
+        content = result["messages"][0].content
+        assert "Insufficient information" not in content
+        assert "Compliance Audit Report" in content
+
+    @patch("app.nodes.generator_node.call_llm", new_callable=AsyncMock)
     async def test_clears_retrieved_docs(self, mock_llm):
         mock_llm.return_value = "Report"
         state = {
