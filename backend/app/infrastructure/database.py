@@ -2,7 +2,7 @@ from functools import lru_cache
 from typing import Any, cast
 from uuid import UUID, uuid4
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, func, select, update, delete
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, func, select, text, update, delete
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.engine import CursorResult
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -131,6 +131,28 @@ async def count_sessions_for_user(user_id: UUID) -> int:
             select(func.count()).select_from(SessionRecord).where(SessionRecord.user_id == user_id)
         )
         return result.scalar() or 0
+
+
+async def create_session_if_under_limit(user_id: UUID, limit: int) -> SessionRecord | None:
+    """Counts and inserts in the same transaction, holding a per-user advisory
+    lock so two concurrent requests can't both pass the count check before
+    either commits (a plain count-then-insert has a race here)."""
+    factory = _get_session_factory()
+    async with factory() as db:
+        lock_stmt = text("SELECT pg_advisory_xact_lock(hashtext(:key)::bigint)").bindparams(key=str(user_id))
+        await db.execute(lock_stmt)
+
+        result = await db.execute(
+            select(func.count()).select_from(SessionRecord).where(SessionRecord.user_id == user_id)
+        )
+        if (result.scalar() or 0) >= limit:
+            return None
+
+        session = SessionRecord(user_id=user_id)
+        db.add(session)
+        await db.commit()
+        await db.refresh(session)
+        return session
 
 
 async def increment_message_count(session_id: UUID, user_id: UUID) -> SessionRecord | None:

@@ -137,11 +137,7 @@ class TestCreateUserSession:
     async def test_create_session(self):
         user_id = uuid4()
 
-        with (
-            patch("app.services.session_service.create_session") as mock_create,
-            patch("app.services.session_service.count_sessions_for_user") as mock_count,
-        ):
-            mock_count.return_value = 0
+        with patch("app.services.session_service.create_session_if_under_limit") as mock_create:
             mock_record = MagicMock()
             mock_record.id = uuid4()
             mock_record.user_id = user_id
@@ -150,23 +146,19 @@ class TestCreateUserSession:
             result = await create_user_session(user_id)
 
             assert result == mock_record
-            mock_create.assert_called_once_with(user_id)
+            assert mock_create.call_args.args[0] == user_id
 
     @pytest.mark.asyncio
     async def test_create_session_at_limit_raises_409(self):
         user_id = uuid4()
 
-        with (
-            patch("app.services.session_service.create_session") as mock_create,
-            patch("app.services.session_service.count_sessions_for_user") as mock_count,
-        ):
-            mock_count.return_value = 3
+        with patch("app.services.session_service.create_session_if_under_limit") as mock_create:
+            mock_create.return_value = None
 
             with pytest.raises(HTTPException) as exc_info:
                 await create_user_session(user_id)
 
             assert exc_info.value.status_code == 409
-            mock_create.assert_not_called()
 
 
 class TestListUserSessions:

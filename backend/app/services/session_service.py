@@ -8,7 +8,7 @@ from app.core.config import get_settings
 from app.infrastructure.database import (
     SessionRecord,
     count_sessions_for_user,
-    create_session,
+    create_session_if_under_limit,
     delete_session,
     get_session_with_owner,
     get_sessions_for_user,
@@ -28,13 +28,13 @@ def _normalize_role(role: str) -> str:
 
 async def create_user_session(user_id: UUID) -> SessionRecord:
     settings = get_settings()
-    existing = await count_sessions_for_user(user_id)
-    if existing >= settings.MAX_SESSIONS_PER_USER:
+    session = await create_session_if_under_limit(user_id, settings.MAX_SESSIONS_PER_USER)
+    if session is None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Session limit reached ({settings.MAX_SESSIONS_PER_USER}). Delete an existing session to create a new one.",
         )
-    return await create_session(user_id)
+    return session
 
 
 async def list_user_sessions(user_id: UUID, limit: int = 50, offset: int = 0) -> tuple[list[SessionRecord], int]:
@@ -98,7 +98,7 @@ async def get_session_messages(session_id: UUID, user_id: UUID) -> list[ChatMess
     except Exception:
         logger.warning("Could not retrieve LangGraph state for session %s", session_id)
         return []
-    thread_values = state["values"]
+    thread_values = state.get("values", [])
     if isinstance(thread_values, list):
         result = []
         for msg in thread_values:

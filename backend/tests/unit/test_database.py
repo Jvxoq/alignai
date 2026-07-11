@@ -10,6 +10,7 @@ from app.infrastructure.database import (
     UserRecord,
     count_sessions_for_user,
     create_session,
+    create_session_if_under_limit,
     create_user,
     delete_session,
     delete_user,
@@ -181,6 +182,28 @@ class TestCreateSession:
         assert fake.added == [result]
         assert fake.committed is True
         assert fake.refreshed == [result]
+
+
+class TestCreateSessionIfUnderLimit:
+    @pytest.mark.asyncio
+    async def test_creates_when_under_limit(self):
+        user_id = uuid4()
+        fake = FakeSession(result=FakeResult(scalar=2))
+        with _patch_factory(fake):
+            result = await create_session_if_under_limit(user_id, limit=3)
+        assert result is not None
+        assert result.user_id == user_id
+        assert fake.committed is True
+
+    @pytest.mark.asyncio
+    async def test_returns_none_when_at_limit(self):
+        user_id = uuid4()
+        fake = FakeSession(result=FakeResult(scalar=3))
+        with _patch_factory(fake):
+            result = await create_session_if_under_limit(user_id, limit=3)
+        assert result is None
+        assert fake.added == []
+        assert fake.committed is False
 
 
 class TestGetSessionsForUser:
