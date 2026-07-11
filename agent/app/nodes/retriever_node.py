@@ -14,15 +14,19 @@ def filter_by_threshold(hits: list[dict], threshold: float) -> list[dict]:
 
 
 def deduplicate_by_article(hits: list[dict]) -> list[dict]:
-    best_by_article: dict[str, dict] = {}
+    best_by_key: dict[str, dict] = {}
     for hit in hits:
         payload = hit.get("payload", {})
-        article_number = payload.get("article_number", "")
-        if not article_number:
+        article_number = payload.get("article_number")
+        recital_number = payload.get("recital_number")
+        # Recitals have no article_number -- key them by recital_number instead
+        # of dropping them, otherwise a recital-only match dedups to nothing.
+        key = article_number or (f"recital-{recital_number}" if recital_number else None)
+        if not key:
             continue
-        if article_number not in best_by_article or hit.get("score", 0.0) > best_by_article[article_number].get("score", 0.0):
-            best_by_article[article_number] = hit
-    return list(best_by_article.values())
+        if key not in best_by_key or hit.get("score", 0.0) > best_by_key[key].get("score", 0.0):
+            best_by_key[key] = hit
+    return list(best_by_key.values())
 
 
 def format_retrieved_docs(hits: list[dict]) -> list[dict]:

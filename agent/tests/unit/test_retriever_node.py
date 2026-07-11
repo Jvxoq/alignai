@@ -71,6 +71,16 @@ def test_deduplicate_skips_blank_article_number():
     assert deduplicate_by_article([_hit("", 0.99)]) == []
 
 
+def test_dedup_keeps_recital_hits_keyed_by_recital_number():
+    hits = [
+        _hit(None, 0.9, recital_number="47"),
+        _hit(None, 0.6, recital_number="47"),
+        _hit(None, 0.8, recital_number="12"),
+    ]
+    out = {h["payload"]["recital_number"]: h["score"] for h in deduplicate_by_article(hits)}
+    assert out == {"47": 0.9, "12": 0.8}
+
+
 def test_format_retrieved_docs_shape():
     hit = _hit("5", 0.88, article_title="Risk", chapter_number="III",
                is_recital=False, parent_text="body")
