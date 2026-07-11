@@ -15,6 +15,7 @@ from app.infrastructure.auth import (
 )
 from app.infrastructure.database import create_user, delete_user, get_user_by_email, get_user_by_id
 from app.models.user import TokenResponse
+from app.services.session_service import delete_langgraph_thread, list_user_sessions
 
 logger = logging.getLogger(__name__)
 
@@ -119,6 +120,13 @@ async def refresh(refresh_token: str) -> TokenResponse:
 
 
 async def delete_user_account(user_id: UUID) -> bool:
+    # The DB row cascade-deletes `sessions`, but that cascade has no idea
+    # LangGraph threads exist -- clean those up first, while we still have
+    # the session ids to do it with.
+    sessions, _ = await list_user_sessions(user_id)
+    for session in sessions:
+        await delete_langgraph_thread(session.id)
+
     deleted = await delete_user(user_id)
     if deleted:
         logger.info("User account deleted: %s", user_id)

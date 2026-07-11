@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
 import pytest
@@ -408,22 +408,40 @@ class TestDeleteUserAccount:
     @pytest.mark.asyncio
     async def test_delete_user_account(self):
         user_id = uuid4()
+        session = MagicMock()
+        session.id = uuid4()
 
-        with patch("app.services.auth_service.delete_user") as mock_delete:
+        with (
+            patch("app.services.auth_service.delete_user") as mock_delete,
+            patch("app.services.auth_service.list_user_sessions") as mock_list,
+            patch("app.services.auth_service.delete_langgraph_thread") as mock_delete_thread,
+        ):
+            mock_list.return_value = ([session], 1)
             mock_delete.return_value = True
+
             result = await delete_user_account(user_id)
+
             assert result is True
             mock_delete.assert_called_once_with(user_id)
+            mock_delete_thread.assert_called_once_with(session.id)
 
     @pytest.mark.asyncio
     async def test_delete_nonexistent_user_account(self):
         user_id = uuid4()
 
-        with patch("app.services.auth_service.delete_user") as mock_delete:
+        with (
+            patch("app.services.auth_service.delete_user") as mock_delete,
+            patch("app.services.auth_service.list_user_sessions") as mock_list,
+            patch("app.services.auth_service.delete_langgraph_thread") as mock_delete_thread,
+        ):
+            mock_list.return_value = ([], 0)
             mock_delete.return_value = False
+
             result = await delete_user_account(user_id)
+
             assert result is False
             mock_delete.assert_called_once_with(user_id)
+            mock_delete_thread.assert_not_called()
 
 
 class TestUserCreateModel:
