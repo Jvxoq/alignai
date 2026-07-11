@@ -168,7 +168,7 @@ class TestListUserSessions:
 
         with (
             patch("app.services.session_service.get_sessions_for_user") as mock_get,
-            patch("app.infrastructure.database.count_sessions_for_user") as mock_count,
+            patch("app.services.session_service.count_sessions_for_user") as mock_count,
         ):
             mock_sessions = [MagicMock(), MagicMock(), MagicMock()]
             mock_get.return_value = mock_sessions
