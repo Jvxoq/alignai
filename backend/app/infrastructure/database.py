@@ -83,13 +83,6 @@ async def create_user(email: str, hashed_password: str) -> UserRecord:
         return user
 
 
-async def get_session(session_id: UUID) -> SessionRecord | None:
-    factory = _get_session_factory()
-    async with factory() as db:
-        result = await db.execute(select(SessionRecord).where(SessionRecord.id == session_id))
-        return result.scalar_one_or_none()
-
-
 async def get_session_with_owner(session_id: UUID, user_id: UUID) -> SessionRecord | None:
     factory = _get_session_factory()
     async with factory() as db:

@@ -51,18 +51,6 @@ def test_defaults(monkeypatch):
     assert settings.LANGCHAIN_TRACING_V2 is True
 
 
-def test_is_production_property(monkeypatch):
-    for key, value in REQUIRED_ENV.items():
-        monkeypatch.setenv(key, value)
-
-    dev_settings = Settings(_env_file=None)
-    assert dev_settings.is_production is False
-
-    monkeypatch.setenv("ENVIRONMENT", "production")
-    prod_settings = Settings(_env_file=None)
-    assert prod_settings.is_production is True
-
-
 def test_get_settings_is_cached():
     assert get_settings() is get_settings()
 

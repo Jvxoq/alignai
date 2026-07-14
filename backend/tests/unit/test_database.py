@@ -14,7 +14,6 @@ from app.infrastructure.database import (
     create_user,
     delete_session,
     delete_user,
-    get_session,
     get_session_with_owner,
     get_sessions_for_user,
     get_user_by_email,
@@ -131,17 +130,6 @@ class TestCreateUser:
         assert fake.added == [result]
         assert fake.committed is True
         assert fake.refreshed == [result]
-
-
-class TestGetSession:
-    @pytest.mark.asyncio
-    async def test_found(self):
-        session_id = uuid4()
-        record = SessionRecord(id=session_id, user_id=uuid4())
-        fake = FakeSession(result=FakeResult(scalar=record))
-        with _patch_factory(fake):
-            result = await get_session(session_id)
-        assert result is record
 
 
 class TestGetSessionWithOwner:

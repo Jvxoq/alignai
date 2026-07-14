@@ -46,11 +46,6 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     DEV_MODE: bool = False
 
-    @property
-    def is_production(self) -> bool:
-        return self.ENVIRONMENT == "production"
-
-
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     return Settings()

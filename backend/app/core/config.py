@@ -54,14 +54,6 @@ class Settings(BaseSettings):
     RETRIEVAL_TOP_K: int = 3
     DEV_MODE: bool = False
 
-    @property
-    def is_production(self) -> bool:
-        return self.ENVIRONMENT == "production"
-
-    @property
-    def is_development(self) -> bool:
-        return self.ENVIRONMENT == "development"
-
     @field_validator("LANGGRAPH_SERVER_URL")
     @classmethod
     def ensure_langgraph_url_scheme(cls, v: str) -> str:
