@@ -171,6 +171,19 @@ export async function logout() {
   clearTokens();
 }
 
+// Best-effort wake-up for the free-tier backend, agent, and database. Called on
+// app load so that by the time an employer signs in and runs a report, the
+// sleeping services are already spinning up instead of cold-starting on their
+// first real click. Fire-and-forget: any failure here is harmless — it only
+// costs the user the cold start we were trying to avoid.
+export async function warmServices() {
+  try {
+    await fetchWithTimeout(`${API_BASE_URL}/health/warm`, { method: "GET" });
+  } catch {
+    // Ignore — this is a pre-warm nudge, not a required request.
+  }
+}
+
 export async function deleteAccount() {
   const response = await request("/users/me", { method: "DELETE" });
   if (response && response.ok) {

@@ -5,6 +5,7 @@ import {
   logout,
   deleteAccount,
   request,
+  warmServices,
   getAccessToken,
   getRefreshToken,
   setTokens,
@@ -107,6 +108,21 @@ describe("logout", () => {
     await logout();
     expect(getAccessToken()).toBeNull();
     expect(getRefreshToken()).toBeNull();
+  });
+});
+
+describe("warmServices", () => {
+  it("pings the warm-up endpoint without a bearer token", async () => {
+    fetch.mockResolvedValueOnce(res({ status: 200 }));
+    await warmServices();
+    const [url, opts] = fetch.mock.calls[0];
+    expect(url).toContain("/health/warm");
+    expect(opts.method).toBe("GET");
+  });
+
+  it("swallows errors so a failed pre-warm never breaks app load", async () => {
+    fetch.mockRejectedValueOnce(new Error("network down"));
+    await expect(warmServices()).resolves.toBeUndefined();
   });
 });
 
