@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from functools import lru_cache
 from typing import Any, cast
@@ -10,6 +11,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from app.core.config import get_settings
+
+logger = logging.getLogger(__name__)
 
 
 class Base(DeclarativeBase):
@@ -57,6 +60,21 @@ def _get_engine():
 def _get_session_factory() -> async_sessionmaker[AsyncSession]:
     engine = _get_engine()
     return async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+
+async def check_database() -> bool:
+    """Run a trivial query to confirm Postgres is reachable. On Neon's
+    scale-to-zero this first query also wakes the endpoint. Returns True on
+    success; logs and returns False on any error (never raises), so callers
+    can use it as a best-effort liveness/wake probe."""
+    factory = _get_session_factory()
+    try:
+        async with factory() as db:
+            await db.execute(text("SELECT 1"))
+        return True
+    except Exception as exc:
+        logger.warning("Database liveness check failed: %s", exc)
+        return False
 
 
 async def get_user_by_email(email: str) -> UserRecord | None:

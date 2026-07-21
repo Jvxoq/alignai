@@ -1,8 +1,12 @@
+import asyncio
+
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import StreamingResponse
 
 from app.api.dependencies import validate_session
 from app.core.limiter import limiter
+from app.infrastructure.database import check_database
+from app.infrastructure.keep_alive import wake_agent
 from app.models.requests import AlignRequest
 from app.services.align_service import stream_align
 
@@ -19,8 +23,38 @@ async def health():
     Health check endpoint for monitoring service availability.
 
     Returns a simple status object indicating the service is running.
+
+    Kept intentionally shallow (no DB/agent calls) because the platform uses
+    this as its health probe — it must stay fast and not fail on a transient
+    DB blip. Use /health/warm to wake dependent services.
     """
     return {"status": "ok"}
+
+
+@router.get(
+    "/health/warm",
+    summary="Warm up sleeping services",
+    response_description="Per-dependency wake status",
+)
+@limiter.limit("12/minute")
+async def warm(request: Request):
+    """
+    Wake the free-tier dependencies (Postgres + agent) so the first real user
+    request isn't blocked by a cold start.
+
+    The frontend calls this on page load. Reaching this route already woke the
+    backend; here we wake the DB (a SELECT 1, which also spins up Neon's
+    scale-to-zero endpoint) and the agent (a health ping) in parallel. Always
+    returns 200 — this is a best-effort nudge, not a strict health gate. A
+    dependency reports "waking" when the wake was triggered but hadn't finished
+    answering yet.
+    """
+    db_ok, agent_ok = await asyncio.gather(check_database(), wake_agent())
+    return {
+        "backend": "ok",
+        "db": "ok" if db_ok else "waking",
+        "agent": "ok" if agent_ok else "waking",
+    }
 
 
 @router.post(
