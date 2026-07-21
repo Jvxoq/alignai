@@ -1,4 +1,5 @@
 from functools import lru_cache
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -69,15 +70,34 @@ class Settings(BaseSettings):
     @field_validator("POSTGRES_URL")
     @classmethod
     def normalize_postgres_url(cls, v: str) -> str:
-        # Let a raw Neon connection string work as-is. Neon hands out
-        # "postgresql://...?sslmode=require", but SQLAlchemy's async engine
-        # needs the +asyncpg scheme, and asyncpg spells the SSL param "ssl="
-        # (not psycopg's "sslmode="). Local dev URLs already use +asyncpg and
-        # carry no sslmode, so both rewrites are no-ops there.
-        if v.startswith("postgresql://"):
-            v = v.replace("postgresql://", "postgresql+asyncpg://", 1)
-        if "sslmode=" in v:
-            v = v.replace("sslmode=", "ssl=", 1)
+        # Let a raw Neon connection string work as-is. Neon (and many tools/CLIs)
+        # hand out something like
+        #   postgres[ql]://u:p@host/db?sslmode=require&channel_binding=require
+        # but SQLAlchemy's async engine needs the "+asyncpg" dialect, and asyncpg
+        # rejects psycopg-style query params: it spells the SSL mode "ssl="
+        # (not "sslmode="), and it has no "channel_binding" connect kwarg at all
+        # (channel binding is negotiated automatically). Forwarding either param
+        # unchanged makes the first connection raise. Local dev URLs already use
+        # "+asyncpg" and carry no query params, so this is a no-op there.
+        if not v:
+            return v
+
+        for prefix in ("postgresql://", "postgres://"):
+            if v.startswith(prefix):
+                v = "postgresql+asyncpg://" + v[len(prefix):]
+                break
+
+        parts = urlsplit(v)
+        if parts.query:
+            normalized: list[tuple[str, str]] = []
+            for key, value in parse_qsl(parts.query, keep_blank_values=True):
+                if key == "sslmode":
+                    normalized.append(("ssl", value))
+                elif key == "channel_binding":
+                    continue  # not an asyncpg connect kwarg — drop it
+                else:
+                    normalized.append((key, value))
+            v = urlunsplit(parts._replace(query=urlencode(normalized)))
         return v
 
     @field_validator("SECRET_KEY")

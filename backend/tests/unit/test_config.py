@@ -29,11 +29,26 @@ def test_explicit_https_scheme_is_preserved():
     assert settings.LANGGRAPH_SERVER_URL == "https://agent.example.com"
 
 
-def test_neon_url_gets_asyncpg_scheme_and_ssl_param():
-    # A raw Neon connection string must become a valid asyncpg URL: +asyncpg
-    # scheme and ssl= (asyncpg's spelling) instead of sslmode=.
+def test_raw_neon_url_becomes_valid_asyncpg_url():
+    # The exact string Neon's dashboard hands out, pasted raw: +asyncpg dialect,
+    # sslmode= -> ssl= (asyncpg's spelling), and channel_binding dropped (asyncpg
+    # has no such connect kwarg — leaving it in raises on the first connection).
     settings = _make_settings(
-        POSTGRES_URL="postgresql://u:p@ep-x.neon.tech/db?sslmode=require"
+        POSTGRES_URL=(
+            "postgresql://u:p@ep-x.neon.tech/db?sslmode=require&channel_binding=require"
+        )
+    )
+    assert (
+        settings.POSTGRES_URL
+        == "postgresql+asyncpg://u:p@ep-x.neon.tech/db?ssl=require"
+    )
+
+
+def test_bare_postgres_scheme_also_gets_asyncpg_dialect():
+    # Some tools/CLIs emit "postgres://" rather than "postgresql://"; without a
+    # dialect SQLAlchemy can't load a driver, so it must be rewritten too.
+    settings = _make_settings(
+        POSTGRES_URL="postgres://u:p@ep-x.neon.tech/db?sslmode=require"
     )
     assert (
         settings.POSTGRES_URL
