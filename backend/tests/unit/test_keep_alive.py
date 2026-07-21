@@ -4,7 +4,18 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import httpx
 import pytest
 
-from app.infrastructure.keep_alive import _ping_agent_once, run_keep_alive_loop
+from app.infrastructure.keep_alive import _ping_agent_once, run_keep_alive_loop, wake_agent
+
+
+def _fake_async_client(get_return=None, get_side_effect=None):
+    client = AsyncMock()
+    if get_side_effect is not None:
+        client.get.side_effect = get_side_effect
+    else:
+        client.get.return_value = get_return
+    client.__aenter__.return_value = client
+    client.__aexit__.return_value = False
+    return client
 
 
 @pytest.mark.asyncio
@@ -86,3 +97,47 @@ async def test_run_keep_alive_loop_strips_trailing_slash_from_base_url():
 
     called_url = mock_ping.await_args_list[0].args[1]
     assert called_url == "http://agent:8123/ok"
+
+
+@pytest.mark.asyncio
+async def test_wake_agent_returns_true_and_pings_ok_endpoint():
+    settings = MagicMock(
+        LANGGRAPH_SERVER_URL="http://agent:8123",
+        AGENT_KEEP_ALIVE_TIMEOUT_SECONDS=30,
+    )
+    client = _fake_async_client(get_return=MagicMock(status_code=200))
+    with patch("app.infrastructure.keep_alive.get_settings", return_value=settings), \
+            patch("app.infrastructure.keep_alive.httpx.AsyncClient", return_value=client):
+        result = await wake_agent()
+    assert result is True
+    client.get.assert_awaited_once_with("http://agent:8123/ok")
+
+
+@pytest.mark.asyncio
+async def test_wake_agent_returns_false_when_still_cold_starting():
+    # A timed-out ping during cold start must degrade to False, not raise —
+    # the request still nudges the platform to wake the instance.
+    settings = MagicMock(
+        LANGGRAPH_SERVER_URL="http://agent:8123",
+        AGENT_KEEP_ALIVE_TIMEOUT_SECONDS=5,
+    )
+    client = _fake_async_client(get_side_effect=httpx.ConnectTimeout("still waking"))
+    with patch("app.infrastructure.keep_alive.get_settings", return_value=settings), \
+            patch("app.infrastructure.keep_alive.httpx.AsyncClient", return_value=client):
+        result = await wake_agent()
+    assert result is False
+
+
+@pytest.mark.asyncio
+async def test_wake_agent_swallows_non_http_errors_so_warm_stays_200():
+    # httpx.InvalidURL does NOT subclass httpx.HTTPError; it must still be caught
+    # so /health/warm never 500s on a misconfigured agent URL.
+    settings = MagicMock(
+        LANGGRAPH_SERVER_URL="http://agent:8123",
+        AGENT_KEEP_ALIVE_TIMEOUT_SECONDS=5,
+    )
+    client = _fake_async_client(get_side_effect=httpx.InvalidURL("bad url"))
+    with patch("app.infrastructure.keep_alive.get_settings", return_value=settings), \
+            patch("app.infrastructure.keep_alive.httpx.AsyncClient", return_value=client):
+        result = await wake_agent()
+    assert result is False

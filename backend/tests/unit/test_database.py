@@ -311,3 +311,23 @@ class TestDeleteUser:
         with _patch_factory(fake):
             result = await delete_user(user_id)
         assert result is False
+
+
+class TestCheckDatabase:
+    @pytest.mark.asyncio
+    async def test_returns_true_and_runs_select_1_when_reachable(self):
+        fake = FakeSession()
+        with _patch_factory(fake):
+            result = await database.check_database()
+        assert result is True
+        assert "SELECT 1" in str(fake.executed_statements[0])
+
+    @pytest.mark.asyncio
+    async def test_returns_false_when_query_raises_instead_of_propagating(self):
+        class BoomSession(FakeSession):
+            async def execute(self, stmt):
+                raise RuntimeError("db unreachable / asleep")
+
+        with _patch_factory(BoomSession()):
+            result = await database.check_database()
+        assert result is False
