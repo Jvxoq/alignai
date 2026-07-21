@@ -57,8 +57,27 @@ class Settings(BaseSettings):
     @field_validator("LANGGRAPH_SERVER_URL")
     @classmethod
     def ensure_langgraph_url_scheme(cls, v: str) -> str:
+        # The backend talks to the agent over Render's private network, which
+        # uses plain http:// internal hostnames (e.g. "alignai-agent:10000").
+        # Default a scheme-less value to http:// so internal traffic isn't
+        # forced onto https and rejected. Public URLs should include their
+        # own explicit scheme.
         if v and not v.startswith(("http://", "https://")):
-            return f"https://{v}"
+            return f"http://{v}"
+        return v
+
+    @field_validator("POSTGRES_URL")
+    @classmethod
+    def normalize_postgres_url(cls, v: str) -> str:
+        # Let a raw Neon connection string work as-is. Neon hands out
+        # "postgresql://...?sslmode=require", but SQLAlchemy's async engine
+        # needs the +asyncpg scheme, and asyncpg spells the SSL param "ssl="
+        # (not psycopg's "sslmode="). Local dev URLs already use +asyncpg and
+        # carry no sslmode, so both rewrites are no-ops there.
+        if v.startswith("postgresql://"):
+            v = v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        if "sslmode=" in v:
+            v = v.replace("sslmode=", "ssl=", 1)
         return v
 
     @field_validator("SECRET_KEY")

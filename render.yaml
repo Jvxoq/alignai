@@ -7,14 +7,18 @@
 ##   3. Before clicking Deploy, set these env vars in the dashboard
 ##      (marked sync:false below — Render will prompt you for them):
 ##        alignai-backend:
-##          POSTGRES_URL  →  copy the Internal Database URL from the alignai-db
-##                           page and change "postgresql://" to
-##                           "postgresql+asyncpg://"
+##          POSTGRES_URL  →  paste the Neon DIRECT connection string (the host
+##                           WITHOUT "-pooler"). Paste it raw — the backend
+##                           normalizes the scheme to postgresql+asyncpg:// and
+##                           the SSL param to ssl= in code (app/core/config.py).
 ##          CORS_ORIGINS  →  replace placeholder with your real frontend URL,
 ##                           e.g. '["https://alignai-frontend.onrender.com"]'
 ##        alignai-agent:
-##          POSTGRES_URI  →  copy the Internal Database URL from the alignai-db
-##                           page (leave the scheme as "postgresql://")
+##          POSTGRES_URI  →  paste the SAME Neon DIRECT connection string as-is,
+##                           keeping "?sslmode=require". Must be the direct
+##                           endpoint, not "-pooler" — the LangGraph checkpoint
+##                           store uses prepared statements, which Neon's pooler
+##                           (transaction mode) breaks.
 ##          REDIS_URI     →  internal connection string for a Render Key Value
 ##                           (Redis-compatible) instance — create one manually
 ##                           first (Render dashboard → New → Key Value), the
@@ -32,11 +36,8 @@
 ##      backend service env vars and paste it back as a fixed value so deploys
 ##      don't rotate it and log users out.
 
-databases:
-  - name: alignai-db
-    databaseName: alignai
-    user: alignai
-    plan: free
+## Production Postgres runs on Neon (provisioned in the Neon dashboard, not
+## here). Both services point at the same Neon database via the env vars below.
 
 services:
   # ── Backend (public Web Service) ─────────────────────────────────────────────
@@ -48,8 +49,8 @@ services:
     plan: free
     healthCheckPath: /health
     envVars:
-      # Must use postgresql+asyncpg:// scheme — SQLAlchemy async engine requirement.
-      # Copy the Internal DB URL from alignai-db and swap the scheme before deploy.
+      # Neon DIRECT connection string (no "-pooler" in the host). Paste it raw —
+      # the backend normalizes the scheme (+asyncpg) and SSL param (ssl=) in code.
       - key: POSTGRES_URL
         sync: false
       - key: LANGGRAPH_SERVER_URL
@@ -100,8 +101,9 @@ services:
     plan: free
     healthCheckPath: /ok
     envVars:
-      # Plain postgresql:// scheme — used by LangGraph's psycopg checkpoint store.
-      # Copy the Internal DB URL from alignai-db (no scheme change needed).
+      # Same Neon DIRECT connection string as the backend, pasted as-is with
+      # ?sslmode=require. Use the direct endpoint, NOT "-pooler": the checkpoint
+      # store's prepared statements break under Neon's transaction-mode pooler.
       # Note the key is POSTGRES_URI (not POSTGRES_URL) — that's the exact
       # name the official langgraph-api image reads.
       - key: POSTGRES_URI
