@@ -220,9 +220,21 @@ export default function AlignPage() {
 
           {status === "streaming" && (
             <div className="chat-message chat-message--assistant">
-              <StatusIndicator status={status} message={statusMessage} error={error} />
-              {responseType === "report" && <ReportDocument content={tokens} />}
-              {responseType && responseType !== "report" && <PlainTextDisplay text={tokens} />}
+              {/* Show the "thinking" status only until output begins; once the
+                  first token lands, hand off to the report so the intermediate
+                  updates don't linger above the answer. */}
+              {!tokens && (
+                <StatusIndicator status={status} message={statusMessage} error={error} />
+              )}
+              {tokens && (
+                // Same wrapper the persisted message uses (below) so the report
+                // has its card background while streaming too -- otherwise it
+                // renders bare until `done` swaps in the wrapped version.
+                <div className="chat-message-content">
+                  {responseType === "report" && <ReportDocument content={tokens} />}
+                  {responseType && responseType !== "report" && <PlainTextDisplay text={tokens} />}
+                </div>
+              )}
             </div>
           )}
 
@@ -231,8 +243,10 @@ export default function AlignPage() {
               below, via ErrorDisplay. */}
           {status === "error" && tokens && (
             <div className="chat-message chat-message--assistant">
-              {responseType === "report" && <ReportDocument content={tokens} />}
-              {responseType && responseType !== "report" && <PlainTextDisplay text={tokens} />}
+              <div className="chat-message-content">
+                {responseType === "report" && <ReportDocument content={tokens} />}
+                {responseType && responseType !== "report" && <PlainTextDisplay text={tokens} />}
+              </div>
             </div>
           )}
 
