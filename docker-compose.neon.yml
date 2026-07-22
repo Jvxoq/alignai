@@ -1,0 +1,21 @@
+# EPHEMERAL Neon-branch test overlay — layer on top of docker-compose.yml to
+# point the PROD images at a throwaway Neon branch instead of the local
+# postgres container. Secrets are NOT stored here: the URLs are injected via
+# ${NEON_POSTGRES_URL} / ${NEON_POSTGRES_URI} from the shell at `up` time.
+#
+#   NEON_POSTGRES_URL='...' NEON_POSTGRES_URI='...' \
+#     docker compose -f docker-compose.yml -f docker-compose.neon.yml up --build -d
+#
+# The local `postgres` container still starts (dependency) but goes unused.
+services:
+  backend:
+    environment:
+      # Backend normalizes this to +asyncpg / ssl= in app/core/config.py.
+      POSTGRES_URL: ${NEON_POSTGRES_URL}
+
+  agent:
+    environment:
+      # DIRECT Neon endpoint (no -pooler), raw psycopg form — the langgraph-api
+      # image reads POSTGRES_URI as-is and its checkpoint store uses prepared
+      # statements that Neon's transaction pooler breaks.
+      POSTGRES_URI: ${NEON_POSTGRES_URI}
