@@ -12,7 +12,7 @@
 
 | Service | Stack |
 |---------|-------|
-| `frontend/` | React 18 + Vite, served by Nginx in prod |
+| `frontend/` | React 18 + Vite, deployed to Vercel |
 | `backend/` | FastAPI + SQLAlchemy (async) + PostgreSQL, JWT auth, Alembic migrations |
 | `agent/` | LangGraph (official `langgraph-api` server image) + Groq (LLM) + Gemini (embeddings) + Qdrant (vector search) + Redis (queue) |
 
@@ -20,7 +20,7 @@
 
 ## Running Locally
 
-### Everything at once (Docker Compose)
+### Backend + agent at once (Docker Compose)
 
 ```bash
 cp .env.example .env   # fill in GROQ_API_KEY, GEMINI_API_KEY, QDRANT_URL, QDRANT_API_KEY, LANGSMITH_API_KEY
@@ -28,7 +28,8 @@ make dev                # hot-reload dev stack
 make prod                # production-parity stack (lean images, no hot reload)
 ```
 
-Both serve: frontend on `http://localhost`, backend on `http://localhost:8000`, agent on `http://localhost:8123`.
+Both serve: backend on `http://localhost:8000`, agent on `http://localhost:8123`. The
+frontend deploys to Vercel and isn't in the Docker stack — run it separately (below).
 
 ### Each service on its own
 

@@ -17,7 +17,7 @@ help:
 	@echo "  make dev-logs      follow dev stack logs"
 	@echo "  make dev-restart   dev-down + dev-up-d"
 	@echo ""
-	@echo "Prod-parity (Nginx build, no reload):"
+	@echo "Prod-parity (lean images, no reload):"
 	@echo "  make prod-build    build the prod-parity images"
 	@echo "  make prod-up       build + start prod-parity stack (foreground)"
 	@echo "  make prod-up-d     build + start prod-parity stack (detached)"

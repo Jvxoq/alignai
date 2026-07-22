@@ -7,8 +7,8 @@
 #   Production parity (base only):      docker compose -f docker-compose.yml up  (make prod)
 #
 # Bind-mount note: mounting the host source over /app would also clobber the
-# container's Linux-built deps. The anonymous volumes (`- /app/.venv`,
-# `- /app/node_modules`) shadow those paths so the container keeps its own.
+# container's Linux-built deps. The anonymous volume (`- /app/.venv`) shadows
+# that path so the container keeps its own.
 # ─────────────────────────────────────────────────────────────────────────────
 
 services:
@@ -36,17 +36,5 @@ services:
     # The dev server is in-memory; REDIS_URI/DATABASE_URI from the base file are
     # simply ignored, and LANGSMITH_API_KEY is optional here.
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    # Run Vite on port 80 so the base 80:80 mapping and healthcheck still apply —
-    # dev and prod share the same URL: http://localhost
-    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "80"]
-    volumes:
-      - ./frontend:/app       # live source → hot-module reload
-      - /app/node_modules     # keep the container's installed deps
-    environment:
-      # Read at runtime by the Vite dev server (prod bakes this in as a build arg).
-      VITE_API_BASE_URL: http://localhost:8000
-    # Vite serves the app root, so the base wget healthcheck on :80 works as-is.
+  # The frontend is not part of this Docker stack — it deploys to Vercel. For
+  # local dev run `cd frontend && npm run dev` (Vite HMR on http://localhost:5173).

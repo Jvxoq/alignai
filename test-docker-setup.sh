@@ -81,8 +81,7 @@ run_test "Backend API Docs" "test_http http://localhost:8000/docs"
 # Test 5: Agent Health
 run_test "Agent Health" "test_http http://localhost:8123/ok"
 
-# Test 6: Frontend
-run_test "Frontend" "test_http http://localhost/"
+# NOTE: the frontend is not part of this Docker stack — it deploys to Vercel.
 
 echo ""
 echo "Testing API functionality..."
@@ -150,11 +149,11 @@ if [ $PASSED_TESTS -eq $TOTAL_TESTS ]; then
     echo -e "${GREEN}🎉 All tests passed! Your Docker setup is working correctly.${NC}"
     echo ""
     echo "Access your services:"
-    echo "  • Frontend:         http://localhost"
     echo "  • Backend API Docs: http://localhost:8000/docs"
+    echo "  • Frontend (Vercel, or local: cd frontend && npm run dev → http://localhost:5173)"
     echo ""
     echo "Next steps:"
-    echo "  1. Create a test account at http://localhost"
+    echo "  1. Start the frontend: cd frontend && npm run dev"
     echo "  2. Try the compliance audit feature"
     echo "  3. Check the logs: docker-compose logs -f"
     exit 0
@@ -164,7 +163,7 @@ else
     echo ""
     echo "Common fixes:"
     echo "  • Wait longer: Services may still be starting up"
-    echo "  • Check ports: Make sure ports 80, 8000, 8123, etc. are available"
+    echo "  • Check ports: Make sure ports 8000, 8123, 5432, etc. are available"
     echo "  • Restart: docker-compose restart"
     exit 1
 fi

@@ -34,19 +34,5 @@ services:
       - ./agent/ingest.py:/deps/agent/ingest.py
       - ./agent/retrieve.py:/deps/agent/retrieve.py
 
-  # Vite dev server (HMR) instead of the Nginx static build. Stops the
-  # frontend image build at the "builder" stage, which still has Node.
-  frontend:
-    build:
-      target: builder
-    container_name: alignai-frontend-dev
-    command: sh -c "npm run dev -- --host 0.0.0.0"
-    ports:
-      - "5173:5173"
-    environment:
-      VITE_API_BASE_URL: http://localhost:8000
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    healthcheck:
-      disable: true
+  # The frontend is not part of this Docker stack — it deploys to Vercel. For
+  # local dev run `cd frontend && npm run dev` (Vite HMR on http://localhost:5173).
