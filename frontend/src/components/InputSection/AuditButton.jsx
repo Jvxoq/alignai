@@ -1,6 +1,8 @@
+import PressButton from "../motion/PressButton";
+
 export default function AuditButton({ onClick, disabled, loading, compact }) {
   return (
-    <button
+    <PressButton
       className={`audit-button ${loading ? "audit-button--loading" : ""}`}
       onClick={onClick}
       disabled={disabled || loading}
@@ -11,6 +13,6 @@ export default function AuditButton({ onClick, disabled, loading, compact }) {
         </svg>
       )}
       {loading ? "Auditing..." : compact ? "Send" : "Audit for Compliance"}
-    </button>
+    </PressButton>
   );
 }

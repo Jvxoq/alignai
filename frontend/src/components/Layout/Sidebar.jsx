@@ -1,8 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion, useReducedMotion } from "motion/react";
 import { useAuth } from "../../hooks/useAuth";
 import { useSession } from "../../hooks/useSession";
 import DeleteAccountModal from "../Auth/DeleteAccountModal";
+import PressButton from "../motion/PressButton";
+import { duration, easeStandard, springs, staggerStep } from "../../lib/motion";
+
+// Container/item variants for the staggered session-list reveal. Triggers
+// once per Sidebar mount (initial="hidden" -> animate="show"), not on every
+// re-render -- selecting a session doesn't replay the stagger.
+const listVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: staggerStep } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: springs.card },
+};
 
 export default function Sidebar() {
   const [showDeleteModal, setShowDeleteModal] = useState(null);
@@ -11,6 +26,7 @@ export default function Sidebar() {
   const { logout } = useAuth();
   const { sessionId, sessions, isLoading, createSession, clearSession, deleteSession, setActiveSession } = useSession();
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
 
   const handleLogout = async () => {
     await logout();
@@ -34,9 +50,9 @@ export default function Sidebar() {
       <div className="sidebar-sessions">
         <div className="sidebar-session-header">
           <h3>Sessions</h3>
-          <button className="new-session-button" onClick={clearSession} disabled={isLoading}>
+          <PressButton className="new-session-button" onClick={clearSession} disabled={isLoading}>
             + New Session
-          </button>
+          </PressButton>
         </div>
         {isLoading ? (
           <div className="session-skeleton" role="status">
@@ -48,20 +64,24 @@ export default function Sidebar() {
         ) : sessions.length === 0 ? (
           <div className="no-sessions">
             <p>No sessions yet</p>
-            <button onClick={createSession}>Create your first session</button>
+            <PressButton onClick={createSession}>Create your first session</PressButton>
           </div>
         ) : (
-          <ul className="session-list">
+          <motion.ul className="session-list" variants={listVariants} initial="hidden" animate="show">
             {sessions.map((session) => (
-              <li key={session.id} className={`session-item ${sessionId === session.id ? "active" : ""}`}>
-                <button
+              <motion.li
+                key={session.id}
+                className={`session-item ${sessionId === session.id ? "active" : ""}`}
+                variants={itemVariants}
+              >
+                <PressButton
                   className="session-name"
                   onClick={() => setActiveSession(session.id)}
                   title={session.title || "Untitled session"}
                 >
                   {session.title || "Untitled session"}
-                </button>
-                <button
+                </PressButton>
+                <PressButton
                   className="session-delete"
                   onClick={() => {
                     setDeleteError(null);
@@ -70,37 +90,49 @@ export default function Sidebar() {
                   aria-label="Delete session"
                 >
                   ×
-                </button>
-              </li>
+                </PressButton>
+              </motion.li>
             ))}
-          </ul>
+          </motion.ul>
         )}
       </div>
       <div className="sidebar-footer">
-        <button className="logout-button" onClick={handleLogout}>
+        <PressButton className="logout-button" onClick={handleLogout}>
           Sign Out
-        </button>
-        <button className="delete-account-button" onClick={() => setShowDeleteAccount(true)}>
+        </PressButton>
+        <PressButton className="delete-account-button" onClick={() => setShowDeleteAccount(true)}>
           Delete Account
-        </button>
+        </PressButton>
       </div>
 
       {showDeleteModal && (
-        <div className="modal-overlay" onClick={() => setShowDeleteModal(null)}>
-          <div className="modal modal-small" onClick={(e) => e.stopPropagation()}>
+        <motion.div
+          className="modal-overlay"
+          onClick={() => setShowDeleteModal(null)}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: duration.fast, ease: easeStandard }}
+        >
+          <motion.div
+            className="modal modal-small"
+            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={springs.standard}
+          >
             <h3>Delete Session</h3>
             <p>Are you sure you want to delete this session? This action cannot be undone.</p>
             {deleteError && <div className="modal-error">{deleteError}</div>}
             <div className="modal-actions">
-              <button className="modal-button secondary" onClick={() => setShowDeleteModal(null)}>
+              <PressButton className="modal-button secondary" onClick={() => setShowDeleteModal(null)}>
                 Cancel
-              </button>
-              <button className="modal-button danger" onClick={() => handleDelete(showDeleteModal)}>
+              </PressButton>
+              <PressButton className="modal-button danger" onClick={() => handleDelete(showDeleteModal)}>
                 Delete
-              </button>
+              </PressButton>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
 
       <DeleteAccountModal isOpen={showDeleteAccount} onClose={() => setShowDeleteAccount(false)} />

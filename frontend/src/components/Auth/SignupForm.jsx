@@ -1,6 +1,12 @@
 import { useState } from "react";
+import { motion } from "motion/react";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate, Link } from "react-router-dom";
+import PressButton from "../motion/PressButton";
+import { duration, easeStandard } from "../../lib/motion";
+
+const focusRing = { boxShadow: "0 0 0 3px rgba(255, 255, 255, 0.15)" };
+const focusTransition = { duration: duration.fast, ease: easeStandard };
 
 export default function SignupForm() {
   const [email, setEmail] = useState("");
@@ -45,7 +51,7 @@ export default function SignupForm() {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email</label>
-            <input
+            <motion.input
               type="email"
               id="email"
               value={email}
@@ -53,11 +59,13 @@ export default function SignupForm() {
               required
               disabled={isLoading}
               autoComplete="email"
+              whileFocus={focusRing}
+              transition={focusTransition}
             />
           </div>
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
+            <motion.input
               type="password"
               id="password"
               value={password}
@@ -66,11 +74,13 @@ export default function SignupForm() {
               disabled={isLoading}
               autoComplete="new-password"
               minLength={8}
+              whileFocus={focusRing}
+              transition={focusTransition}
             />
           </div>
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
+            <motion.input
               type="password"
               id="confirmPassword"
               value={confirmPassword}
@@ -78,11 +88,13 @@ export default function SignupForm() {
               required
               disabled={isLoading}
               autoComplete="new-password"
+              whileFocus={focusRing}
+              transition={focusTransition}
             />
           </div>
-          <button type="submit" className="auth-button" disabled={isLoading}>
+          <PressButton type="submit" className="auth-button" disabled={isLoading}>
             {isLoading ? "Creating account..." : "Create Account"}
-          </button>
+          </PressButton>
         </form>
         <p className="auth-footer">
           Already have an account? <Link to="/login">Sign in</Link>

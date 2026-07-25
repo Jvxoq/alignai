@@ -1,4 +1,5 @@
 import React from "react";
+import FadeIn from "../motion/FadeIn";
 
 const STATUS_LABELS = {
   idle: "Ready",
@@ -16,10 +17,10 @@ function StatusIndicatorInner({ status, message, error }) {
   if (!isActive && !isError) return null;
 
   return (
-    <div className={`status-indicator ${isError ? "status-indicator--error" : "status-indicator--active"}`}>
+    <FadeIn variant="fast" className={`status-indicator ${isError ? "status-indicator--error" : "status-indicator--active"}`}>
       {!isError && <span className="status-dot" />}
       <span>{isError ? (error || "An error occurred") : label}</span>
-    </div>
+    </FadeIn>
   );
 }
 

@@ -1,12 +1,13 @@
 import React from "react";
+import FadeIn from "../motion/FadeIn";
 
 function PlainTextDisplayInner({ text }) {
   if (!text) return null;
 
   return (
-    <div className="plain-text-display">
+    <FadeIn className="plain-text-display">
       <pre>{text}</pre>
-    </div>
+    </FadeIn>
   );
 }
 

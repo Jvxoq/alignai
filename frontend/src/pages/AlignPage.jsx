@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { ChatSkeleton } from "../components/ChatSkeleton";
 import AuditButton from "../components/InputSection/AuditButton";
 import CharacterCounter from "../components/InputSection/CharacterCounter";
@@ -10,6 +11,7 @@ import StatusIndicator from "../components/ResponseSection/StatusIndicator";
 import { useSession } from "../hooks/useSession";
 import { useStream } from "../hooks/useStream";
 import { postAlign } from "../services/alignApi";
+import { springs } from "../lib/motion";
 
 const MAX_LENGTH = 2000;
 // Mirrors the backend's MAX_SESSIONS_PER_USER (app/core/config.py).
@@ -21,6 +23,12 @@ export default function AlignPage() {
   const [historyLoading, setHistoryLoading] = useState(false);
   const { sessionId, sessions, createSession, updateSessionTitle, fetchMessages } = useSession();
   const { status, responseType, statusMessage, tokens, error, startStream, abort, reset, setError, setStatus } = useStream();
+  const reduceMotion = useReducedMotion();
+  const messageEntrance = {
+    initial: { opacity: 0, y: reduceMotion ? 0 : 12 },
+    animate: { opacity: 1, y: 0 },
+    transition: springs.card,
+  };
   const messagesEndRef = useRef(null);
   const messagesRef = useRef(null);
   const hasSetTitle = useRef(false);
@@ -204,7 +212,7 @@ export default function AlignPage() {
       <main className="chat-layout">
         <div className="chat-messages" ref={messagesRef}>
           {historyLoading ? <ChatSkeleton /> : messages.map((msg) => (
-            <div key={msg.id} className={`chat-message chat-message--${msg.role}`}>
+            <motion.div key={msg.id} className={`chat-message chat-message--${msg.role}`} {...messageEntrance}>
               <div className="chat-message-content">
                 {msg.role === "user" ? (
                   <div className="user-message">{msg.content}</div>
@@ -215,11 +223,11 @@ export default function AlignPage() {
                   </>
                 )}
               </div>
-            </div>
+            </motion.div>
           ))}
 
           {status === "streaming" && (
-            <div className="chat-message chat-message--assistant">
+            <motion.div className="chat-message chat-message--assistant" {...messageEntrance}>
               {/* Show the "thinking" status only until output begins; once the
                   first token lands, hand off to the report so the intermediate
                   updates don't linger above the answer. */}
@@ -235,25 +243,25 @@ export default function AlignPage() {
                   {responseType && responseType !== "report" && <PlainTextDisplay text={tokens} />}
                 </div>
               )}
-            </div>
+            </motion.div>
           )}
 
           {/* A stream that errors out after producing partial content should
               still show that content -- the error itself is reported once,
               below, via ErrorDisplay. */}
           {status === "error" && tokens && (
-            <div className="chat-message chat-message--assistant">
+            <motion.div className="chat-message chat-message--assistant" {...messageEntrance}>
               <div className="chat-message-content">
                 {responseType === "report" && <ReportDocument content={tokens} />}
                 {responseType && responseType !== "report" && <PlainTextDisplay text={tokens} />}
               </div>
-            </div>
+            </motion.div>
           )}
 
           {status === "error" && !tokens && (
-            <div className="chat-message chat-message--assistant">
+            <motion.div className="chat-message chat-message--assistant" {...messageEntrance}>
               <StatusIndicator status={status} message={statusMessage} error={error} />
-            </div>
+            </motion.div>
           )}
 
           {/* The streaming/error block above already shows this error inline
