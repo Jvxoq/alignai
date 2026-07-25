@@ -15,9 +15,28 @@ body {
 }
 
 .app {
+  position: relative;
   max-width: 960px;
   margin: 0 auto;
   padding: var(--space-xl);
+}
+
+.landing-signin {
+  position: absolute;
+  top: var(--space-xl);
+  right: var(--space-xl);
+  padding: var(--space-xs) var(--space-md);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.landing-signin:hover {
+  opacity: 0.7;
 }
 
 .app-header {
@@ -210,15 +229,6 @@ body {
 .report-document p {
   margin-bottom: var(--space-sm);
   color: var(--color-text);
-}
-
-.report-document-markdown {
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .error-display {
@@ -595,7 +605,6 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  animation: overlay-fade-in 0.15s ease-out;
 }
 
 .modal {
@@ -605,17 +614,6 @@ body {
   padding: var(--space-xl);
   max-width: 500px;
   width: 90%;
-  animation: modal-pop-in 0.18s ease-out;
-}
-
-@keyframes overlay-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes modal-pop-in {
-  from { opacity: 0; transform: scale(0.96) translateY(4px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .modal-small {
@@ -717,6 +715,36 @@ body {
   overflow: hidden;
 }
 
+.trial-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xl);
+  text-align: center;
+}
+
+.trial-cta-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.trial-cta .auth-button {
+  width: auto;
+  margin-top: 0;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.trial-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-sm) var(--space-lg);
+  color: var(--color-text);
+  text-decoration: underline;
+  font-size: 0.95rem;
+}
+
 .session-limit-message {
   flex: 1;
   display: flex;
@@ -758,7 +786,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  animation: fade-in 0.25s ease-out;
 }
 
 .chat-message--user {

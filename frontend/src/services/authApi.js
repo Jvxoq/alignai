@@ -193,4 +193,4 @@ export async function deleteAccount() {
   return false;
 }
 
-export { getAccessToken, getRefreshToken, setTokens, clearTokens, request, extractErrorMessage };
+export { getAccessToken, getRefreshToken, setTokens, clearTokens, request, extractErrorMessage, fetchWithTimeout };
