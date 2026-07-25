@@ -11,6 +11,7 @@ from slowapi.errors import RateLimitExceeded
 from app.api.routes.align import router as align_router
 from app.api.routes.auth import router as auth_router
 from app.api.routes.sessions import router as sessions_router
+from app.api.routes.trial import router as trial_router
 from app.api.routes.users import router as users_router
 from app.core.config import settings
 from app.core.limiter import limiter
@@ -64,3 +65,4 @@ app.include_router(auth_router)
 app.include_router(sessions_router)
 app.include_router(users_router)
 app.include_router(align_router)
+app.include_router(trial_router)

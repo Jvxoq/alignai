@@ -11,6 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from app.infrastructure.auth import (
     create_access_token,
     create_refresh_token,
+    create_trial_token,
     decode_token,
     hash_password,
     verify_password,
@@ -153,6 +154,27 @@ class TestTokenCreation:
         tampered = f"{header}.{tampered_payload}.{sig}"
         with pytest.raises(ValueError, match="Invalid or expired token"):
             decode_token(tampered)
+
+
+class TestTrialToken:
+    def test_create_trial_token_structure(self):
+        token = create_trial_token()
+        payload = decode_token(token)
+
+        assert payload["type"] == "trial"
+        assert "sub" not in payload
+        assert "exp" in payload
+
+        exp = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
+        now = datetime.now(timezone.utc)
+        assert exp > now + timedelta(days=29)
+        assert exp < now + timedelta(days=31)
+
+    def test_trial_token_not_accepted_as_access_token(self):
+        # A trial cookie must never be usable to authenticate as a real user.
+        token = create_trial_token()
+        payload = decode_token(token)
+        assert payload["type"] != "access"
 
 
 class TestSignup:

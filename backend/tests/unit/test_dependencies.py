@@ -7,8 +7,8 @@ import pytest
 from fastapi import HTTPException, status
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.api.dependencies import get_current_user, validate_session
-from app.infrastructure.auth import create_access_token, create_refresh_token
+from app.api.dependencies import get_current_user, require_unused_trial, validate_session
+from app.infrastructure.auth import create_access_token, create_refresh_token, create_trial_token
 from app.models.requests import AlignRequest
 from app.models.user import UserResponse
 
@@ -200,3 +200,34 @@ class TestValidateSession:
                 await validate_session(request, current_user=_current_user())
         assert exc.value.status_code == 500
         assert exc.value.detail == "Database operation failed"
+
+
+class TestRequireUnusedTrial:
+    def _request(self, cookie_value: str | None = None) -> SimpleNamespace:
+        cookies = {"alignai_trial_used": cookie_value} if cookie_value is not None else {}
+        return SimpleNamespace(cookies=cookies)
+
+    @pytest.mark.asyncio
+    async def test_no_cookie_allows_trial(self):
+        # First-time visitor, nothing to check against.
+        await require_unused_trial(self._request())
+
+    @pytest.mark.asyncio
+    async def test_undecodable_cookie_allows_trial(self):
+        # A garbled or forged cookie must not itself block a real first trial.
+        await require_unused_trial(self._request("not-a-jwt"))
+
+    @pytest.mark.asyncio
+    async def test_wrong_token_type_allows_trial(self):
+        # A non-trial token (e.g. a stray access token) in this cookie slot
+        # must not be treated as proof the trial was used.
+        token = create_access_token(uuid4())
+        await require_unused_trial(self._request(token))
+
+    @pytest.mark.asyncio
+    async def test_valid_trial_cookie_returns_403(self):
+        token = create_trial_token()
+        with pytest.raises(HTTPException) as exc:
+            await require_unused_trial(self._request(token))
+        assert exc.value.status_code == 403
+        assert "already used" in exc.value.detail

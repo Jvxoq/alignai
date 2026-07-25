@@ -1,10 +1,10 @@
 import logging
 from uuid import UUID
 
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Depends, Header, HTTPException, Request, status
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.infrastructure.auth import decode_token
+from app.infrastructure.auth import TRIAL_COOKIE_NAME, decode_token
 from app.infrastructure.database import get_user_by_id
 from app.models.requests import AlignRequest
 from app.models.user import UserResponse
@@ -90,3 +90,19 @@ async def validate_session(
             detail="Database operation failed",
         )
     return body.session_id
+
+
+async def require_unused_trial(request: Request) -> None:
+    token = request.cookies.get(TRIAL_COOKIE_NAME)
+    if not token:
+        return
+    try:
+        payload = decode_token(token)
+    except ValueError:
+        return
+    if payload.get("type") != "trial":
+        return
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Free trial already used. Please sign in to continue.",
+    )

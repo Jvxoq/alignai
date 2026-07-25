@@ -10,6 +10,9 @@ from app.core.config import get_settings
 _JWT_ALGORITHM = "HS256"
 _pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+TRIAL_COOKIE_NAME = "alignai_trial_used"
+_TRIAL_TOKEN_EXPIRE_DAYS = 30
+
 
 def hash_password(password: str) -> str:
     return _pwd_context.hash(password)
@@ -35,6 +38,13 @@ def create_refresh_token(user_id: UUID) -> str:
     settings = get_settings()
     expire = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
     payload = {"sub": str(user_id), "exp": expire, "type": "refresh"}
+    return jwt.encode(payload, settings.SECRET_KEY, algorithm=_JWT_ALGORITHM)
+
+
+def create_trial_token() -> str:
+    settings = get_settings()
+    expire = datetime.now(timezone.utc) + timedelta(days=_TRIAL_TOKEN_EXPIRE_DAYS)
+    payload = {"exp": expire, "type": "trial"}
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=_JWT_ALGORITHM)
 
 
